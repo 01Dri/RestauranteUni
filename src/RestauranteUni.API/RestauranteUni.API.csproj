@@ -8,10 +8,18 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.8" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\RestauranteUni.Application\RestauranteUni.Application.csproj" />
+    <ProjectReference Include="..\RestauranteUni.Data\RestauranteUni.Data.csproj" />
   </ItemGroup>
 
 </Project>

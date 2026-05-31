@@ -1,4 +1,4 @@
-﻿namespace RestauranteUni.Domain.Authentication.Roles
+﻿namespace RestauranteUni.Domain.Account.Roles
 {
     public enum RoleStatus
     {
