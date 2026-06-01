@@ -1,21 +1,12 @@
 ﻿using FluentValidation;
-using RestauranteUni.Domain.Account.DTO;
-using RestauranteUni.Domain.ValuesObjects;
 
-namespace RestauranteUni.Application.UseCases.Account.Validations
+namespace RestauranteUni.Application.Utils
 {
-    public class CreateAccountDtoValidation : AbstractValidator<CreateAccountDto>
+    public class PasswordValidation : AbstractValidator<string>
     {
-        public CreateAccountDtoValidation()
+        public PasswordValidation()
         {
-            RuleFor(x => x.Email)
-                .NotEmpty()
-                .WithMessage("E-mail is required")
-                .Must(Email.IsValid)
-                .WithMessage("Invalid e-mail");
-
-
-            RuleFor(x => x.Password)
+            RuleFor(x => x)
                 .NotEmpty()
                 .WithMessage("Password is required")
                 .MinimumLength(8)

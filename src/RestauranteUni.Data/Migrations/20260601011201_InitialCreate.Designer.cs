@@ -11,7 +11,7 @@ using RestauranteUni.Data;
 namespace RestauranteUni.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260531063103_InitialCreate")]
+    [Migration("20260601011201_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace RestauranteUni.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.8");
 
-            modelBuilder.Entity("RestauranteUni.Domain.Authentication.Account", b =>
+            modelBuilder.Entity("RestauranteUni.Domain.Accounts.Account", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -62,20 +62,21 @@ namespace RestauranteUni.Data.Migrations
                     b.ToTable("accounts", (string)null);
                 });
 
-            modelBuilder.Entity("RestauranteUni.Domain.Authentication.Roles.Role", b =>
+            modelBuilder.Entity("RestauranteUni.Domain.Accounts.Roles.Role", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasColumnName("id");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("type");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("name");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Type")
+                    b.HasIndex("Id")
                         .IsUnique()
                         .HasDatabaseName("ix_roles_type");
 
@@ -84,32 +85,32 @@ namespace RestauranteUni.Data.Migrations
                     b.HasData(
                         new
                         {
+                            Id = 0,
+                            Name = "Customer"
+                        },
+                        new
+                        {
                             Id = 1,
-                            Type = 0
+                            Name = "Manager"
                         },
                         new
                         {
                             Id = 2,
-                            Type = 1
+                            Name = "Admin"
                         },
                         new
                         {
                             Id = 3,
-                            Type = 2
+                            Name = "Professional"
                         },
                         new
                         {
                             Id = 4,
-                            Type = 3
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Type = 4
+                            Name = "Owner"
                         });
                 });
 
-            modelBuilder.Entity("RestauranteUni.Domain.Authentication.Roles.RoleAccount", b =>
+            modelBuilder.Entity("RestauranteUni.Domain.Accounts.Roles.RoleAccount", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -130,27 +131,25 @@ namespace RestauranteUni.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex("AccountId");
 
-                    b.HasIndex("AccountId", "RoleId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_role_accounts_account_id_role_id");
+                    b.HasIndex("RoleId");
 
                     b.ToTable("role_accounts", (string)null);
                 });
 
-            modelBuilder.Entity("RestauranteUni.Domain.Authentication.Roles.RoleAccount", b =>
+            modelBuilder.Entity("RestauranteUni.Domain.Accounts.Roles.RoleAccount", b =>
                 {
-                    b.HasOne("RestauranteUni.Domain.Authentication.Account", "Account")
+                    b.HasOne("RestauranteUni.Domain.Accounts.Account", "Account")
                         .WithMany("RoleAccounts")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RestauranteUni.Domain.Authentication.Roles.Role", "Role")
-                        .WithMany("RoleAccounts")
+                    b.HasOne("RestauranteUni.Domain.Accounts.Roles.Role", "Role")
+                        .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Account");
@@ -158,12 +157,7 @@ namespace RestauranteUni.Data.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("RestauranteUni.Domain.Authentication.Account", b =>
-                {
-                    b.Navigation("RoleAccounts");
-                });
-
-            modelBuilder.Entity("RestauranteUni.Domain.Authentication.Roles.Role", b =>
+            modelBuilder.Entity("RestauranteUni.Domain.Accounts.Account", b =>
                 {
                     b.Navigation("RoleAccounts");
                 });

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RestauranteUni.Domain.Account.DTO;
+using RestauranteUni.Domain.Accounts.DTO;
 using RestauranteUni.Domain.UseCases;
 
 namespace RestauranteUni.API.Controllers

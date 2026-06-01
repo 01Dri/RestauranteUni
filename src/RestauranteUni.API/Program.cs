@@ -1,12 +1,15 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using RestauranteUni.Application.UseCases.Account;
-using RestauranteUni.Application.UseCases.Account.Validations;
+using RestauranteUni.Application.UseCases.Accounts;
+using RestauranteUni.Application.UseCases.Accounts.Validations;
+using RestauranteUni.Application.Utils;
 using RestauranteUni.Data;
-using RestauranteUni.Domain.Account.DTO;
+using RestauranteUni.Domain.Accounts.DTO;
 using RestauranteUni.Domain.UseCases;
+using RestauranteUni.Domain.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddScoped<IEcrypter, Ecrypter>();
 builder.Services.AddScoped<IValidator<CreateAccountDto>, CreateAccountDtoValidation>();
 builder.Services.AddScoped<
         IUseCaseHandler<CreateAccountDto, CreateAccountResponseDto>,

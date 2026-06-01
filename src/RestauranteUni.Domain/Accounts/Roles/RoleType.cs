@@ -1,4 +1,4 @@
-﻿    namespace RestauranteUni.Domain.Account.Roles
+﻿    namespace RestauranteUni.Domain.Accounts.Roles
     {
         public enum RoleType
         {

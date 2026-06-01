@@ -1,18 +1,12 @@
-﻿namespace RestauranteUni.Domain.Account.Roles
+﻿namespace RestauranteUni.Domain.Accounts.Roles
 {
     public sealed class Role : IEquatable<Role>
     {
-        public int? Id { get; set; }
-
-        public RoleType Type { get; set; }
-
-        public string Name => Type.ToString();
-
-        public List<RoleAccount> RoleAccounts { get; set; } = [];
-
+        public RoleType Id { get; set; }
+        public string Name { get;  set; } = string.Empty;
         public bool Equals(Role? other)
         {
-            return other is not null && Type == other.Type;
+            return other is not null && Id == other.Id;
         }
 
         public override bool Equals(object? obj)
@@ -20,19 +14,19 @@
             return obj switch
             {
                 Role role => Equals(role),
-                RoleType roleType => Type == roleType,
+                RoleType roleType => Id == roleType,
                 _ => false
             };
         }
 
         public override int GetHashCode()
         {
-            return Type.GetHashCode();
+            return Id.GetHashCode();
         }
 
         public static bool operator ==(Role? role, RoleType roleType)
         {
-            return role?.Type == roleType;
+            return role?.Id == roleType;
         }
 
         public static bool operator !=(Role? role, RoleType roleType)
@@ -43,7 +37,7 @@
         {
             return new Role
             {
-                Type = roleType
+                Id = roleType
             };
         }
 

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using RestauranteUni.Domain.Account;
-using RestauranteUni.Domain.Account.Roles;
+using RestauranteUni.Domain.Accounts;
+using RestauranteUni.Domain.Accounts.Roles;
 
 namespace RestauranteUni.Data
 {

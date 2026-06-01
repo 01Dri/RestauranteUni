@@ -34,9 +34,8 @@ namespace RestauranteUni.Data.Migrations
                 name: "roles",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    type = table.Column<int>(type: "INTEGER", nullable: false)
+                    id = table.Column<int>(type: "INTEGER", nullable: false),
+                    name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -67,19 +66,19 @@ namespace RestauranteUni.Data.Migrations
                         column: x => x.role_id,
                         principalTable: "roles",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
                 table: "roles",
-                columns: new[] { "id", "type" },
+                columns: new[] { "id", "name" },
                 values: new object[,]
                 {
-                    { 1, 0 },
-                    { 2, 1 },
-                    { 3, 2 },
-                    { 4, 3 },
-                    { 5, 4 }
+                    { 0, "Customer" },
+                    { 1, "Manager" },
+                    { 2, "Admin" },
+                    { 3, "Professional" },
+                    { 4, "Owner" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -89,10 +88,9 @@ namespace RestauranteUni.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_role_accounts_account_id_role_id",
+                name: "IX_role_accounts_account_id",
                 table: "role_accounts",
-                columns: new[] { "account_id", "role_id" },
-                unique: true);
+                column: "account_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_role_accounts_role_id",
@@ -102,7 +100,7 @@ namespace RestauranteUni.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "ix_roles_type",
                 table: "roles",
-                column: "type",
+                column: "id",
                 unique: true);
         }
 

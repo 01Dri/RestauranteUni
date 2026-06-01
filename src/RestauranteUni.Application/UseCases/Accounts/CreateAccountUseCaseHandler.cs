@@ -2,21 +2,26 @@
 using RestauranteUni.Application.Extensions;
 using RestauranteUni.Data;
 using RestauranteUni.Domain;
-using RestauranteUni.Domain.Account.DTO;
+using RestauranteUni.Domain.Accounts;
+using RestauranteUni.Domain.Accounts.DTO;
+using RestauranteUni.Domain.Accounts.Roles;
 using RestauranteUni.Domain.UseCases;
+using RestauranteUni.Domain.Utils;
 using RestauranteUni.Domain.ValuesObjects;
 
-namespace RestauranteUni.Application.UseCases.Account
+namespace RestauranteUni.Application.UseCases.Accounts
 {
     public class CreateAccountUseCaseHandler : IUseCaseHandler<CreateAccountDto, CreateAccountResponseDto>
     {
         private readonly ApplicationDbContext _context;
         private readonly IValidator<CreateAccountDto> _validator;
+        private readonly IEcrypter _ecrypter;
 
-        public CreateAccountUseCaseHandler(ApplicationDbContext context, IValidator<CreateAccountDto> validator)
+        public CreateAccountUseCaseHandler(ApplicationDbContext context, IValidator<CreateAccountDto> validator, IEcrypter ecrypter)
         {
             _context = context;
             _validator = validator;
+            _ecrypter = ecrypter;
         }
 
         public async Task<Result<CreateAccountResponseDto>> HandleAsync(CreateAccountDto parameter, CancellationToken cancellation = default)
@@ -28,10 +33,14 @@ namespace RestauranteUni.Application.UseCases.Account
             }
 
             var email = new Email(parameter.Email);
-            var account = new Domain.Account.Account()
+            var account = new Account()
             {
                 Email = email,
-                Password = BCrypt.Net.BCrypt.HashPassword(parameter.Password),
+                Password = _ecrypter.HashPassword(parameter.Password),
+                RoleAccounts =
+                [
+                    RoleAccount.Create(RoleType.Customer, RoleStatus.Enable)
+                ]
             };
 
             await _context.Accounts.AddAsync(account, cancellation);
@@ -40,6 +49,10 @@ namespace RestauranteUni.Application.UseCases.Account
             {
                 Id = account.Id,
                 Email = account.Email,
+                Roles = account.RoleAccounts
+                    .Where(x => x.RoleId.HasValue)
+                    .Select(x => x.RoleId!.Value)
+                    .ToList()
             });
 
         }

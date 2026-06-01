@@ -1,7 +1,7 @@
-﻿using RestauranteUni.Domain.Account.Roles;
+﻿using RestauranteUni.Domain.Accounts.Roles;
 using RestauranteUni.Domain.ValuesObjects;
 
-namespace RestauranteUni.Domain.Account
+namespace RestauranteUni.Domain.Accounts
 {
     public class Account : BaseDomain<long>
     {

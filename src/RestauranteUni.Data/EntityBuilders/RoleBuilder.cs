@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using RestauranteUni.Domain.Account.Roles;
+using RestauranteUni.Domain.Accounts.Roles;
 
 namespace RestauranteUni.Data.EntityBuilders
 {
@@ -15,22 +15,21 @@ namespace RestauranteUni.Data.EntityBuilders
             builder.Property(x => x.Id)
                 .HasColumnName("id");
 
-            builder.Property(x => x.Type)
-                .HasColumnName("type")
-                .IsRequired();
-
-            builder.Ignore(x => x.Name);
-
-            builder.HasIndex(x => x.Type)
+            builder.HasIndex(x => x.Id)
                 .HasDatabaseName("ix_roles_type")
                 .IsUnique();
 
+            builder.Property(x => x.Name)
+                .HasColumnName("name")
+                .HasMaxLength(100)
+                .IsRequired();
+
             builder.HasData(
-                new Role { Id = 1, Type = RoleType.Customer },
-                new Role { Id = 2, Type = RoleType.Manager },
-                new Role { Id = 3, Type = RoleType.Admin },
-                new Role { Id = 4, Type = RoleType.Professional },
-                new Role { Id = 5, Type = RoleType.Owner });
+                new Role { Id = RoleType.Customer, Name = nameof(RoleType.Customer) },
+                new Role { Id = RoleType.Manager, Name = nameof(RoleType.Manager) },
+                new Role { Id = RoleType.Admin, Name = nameof(RoleType.Admin) },
+                new Role { Id = RoleType.Professional, Name = nameof(RoleType.Professional) },
+                new Role { Id = RoleType.Owner, Name = nameof(RoleType.Owner) });
         }
     }
 }

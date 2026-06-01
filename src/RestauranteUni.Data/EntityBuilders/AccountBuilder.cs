@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using RestauranteUni.Domain.Account;
+using RestauranteUni.Domain.Accounts;
 using RestauranteUni.Domain.ValuesObjects;
 
 namespace RestauranteUni.Data.EntityBuilders

@@ -1,8 +1,8 @@
-﻿using RestauranteUni.Domain.Account.Roles;
+﻿using RestauranteUni.Domain.Accounts.Roles;
 using RestauranteUni.Domain.UseCases;
 using RestauranteUni.Domain.ValuesObjects;
 
-namespace RestauranteUni.Domain.Account.DTO
+namespace RestauranteUni.Domain.Accounts.DTO
 {
     public class CreateAccountResponseDto 
         : IResponse<long>

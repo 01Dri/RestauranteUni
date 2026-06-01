@@ -1,6 +1,6 @@
 ﻿using RestauranteUni.Domain.UseCases;
 
-namespace RestauranteUni.Domain.Account.DTO
+namespace RestauranteUni.Domain.Accounts.DTO
 {
     public record CreateAccountDto : IRequest
     {

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using RestauranteUni.Domain.Account.Roles;
+using RestauranteUni.Domain.Accounts.Roles;
 
 namespace RestauranteUni.Data.EntityBuilders
 {
@@ -23,6 +23,10 @@ namespace RestauranteUni.Data.EntityBuilders
                 .HasColumnName("role_id")
                 .IsRequired();
 
+            builder.HasOne(x => x.Role)
+                .WithMany()
+                .HasForeignKey(x => x.RoleId);
+
             builder.Property(x => x.RoleStatus)
                 .HasColumnName("role_status")
                 .IsRequired();
@@ -32,14 +36,6 @@ namespace RestauranteUni.Data.EntityBuilders
                 .HasForeignKey(x => x.AccountId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(x => x.Role)
-                .WithMany(x => x.RoleAccounts)
-                .HasForeignKey(x => x.RoleId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasIndex(x => new { x.AccountId, x.RoleId })
-                .HasDatabaseName("ix_role_accounts_account_id_role_id")
-                .IsUnique();
         }
     }
 }

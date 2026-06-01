@@ -1,9 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
-using RestauranteUni.Application.UseCases.Account;
-using RestauranteUni.Application.UseCases.Account.Validations;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using Microsoft.EntityFrameworkCore;
+using Moq;
+using RestauranteUni.Application.UseCases.Accounts;
+using RestauranteUni.Application.UseCases.Accounts.Validations;
+using RestauranteUni.Application.Utils;
 using RestauranteUni.Data;
-using RestauranteUni.Domain.Account.DTO;
+using RestauranteUni.Domain.Accounts.DTO;
 using RestauranteUni.Domain.UseCases;
+using RestauranteUni.Domain.Utils;
 
 namespace RestaurenteUni.Test.UseCases.Account
 {
@@ -11,6 +16,8 @@ namespace RestaurenteUni.Test.UseCases.Account
     {
 
         private IUseCaseHandler<CreateAccountDto, CreateAccountResponseDto> _handler;
+        private Mock<IEcrypter> _passwordEncrypter;
+        private ApplicationDbContext _context;
 
         [SetUp]
         public void Setup()
@@ -18,7 +25,19 @@ namespace RestaurenteUni.Test.UseCases.Account
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
-            _handler = new CreateAccountUseCaseHandler(new ApplicationDbContext(options), new CreateAccountDtoValidation());
+
+            _passwordEncrypter = new Mock<IEcrypter>();
+            _passwordEncrypter.Setup(x => x.HashPassword(It.IsAny<string>()))
+                .Returns("hash_password");
+            _context = new ApplicationDbContext(options);
+            _context.Database.EnsureCreated();
+            _handler = new CreateAccountUseCaseHandler(_context, new CreateAccountDtoValidation(), _passwordEncrypter.Object);
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _context.Dispose();
         }
 
 
@@ -58,7 +77,7 @@ namespace RestaurenteUni.Test.UseCases.Account
             {
                 Email = email,
                 Password = "Abc12345",
-                BirthDate = DateTime.Now
+                BirthDate = DateTime.Now.AddYears(-18)
             };
 
             var result = await _handler.HandleAsync(createDto);
@@ -81,7 +100,7 @@ namespace RestaurenteUni.Test.UseCases.Account
             {
                 Email = "diego@gmail.com",
                 Password = password,
-                BirthDate = DateTime.Now
+                BirthDate = DateTime.Now.AddYears(-18)
             };
 
             var result = await _handler.HandleAsync(createDto);
@@ -105,7 +124,7 @@ namespace RestaurenteUni.Test.UseCases.Account
             {
                 Email = email,
                 Password = "123456",
-                BirthDate = DateTime.Now
+                BirthDate = DateTime.Now.AddYears(-18)
             };
 
             var result = await _handler.HandleAsync(createDto);
@@ -130,7 +149,7 @@ namespace RestaurenteUni.Test.UseCases.Account
             {
                 Email = "",
                 Password = "123456",
-                BirthDate = DateTime.Now
+                BirthDate = DateTime.Now.AddYears(-18)
             };
 
             var result = await _handler.HandleAsync(createDto);
@@ -163,7 +182,7 @@ namespace RestaurenteUni.Test.UseCases.Account
             {
                 Email = "diego@gmail.com",
                 Password = "",
-                BirthDate = DateTime.Now
+                BirthDate = DateTime.Now.AddYears(-18)
             };
 
             var result = await _handler.HandleAsync(createDto);
@@ -212,7 +231,7 @@ namespace RestaurenteUni.Test.UseCases.Account
             {
                 Email = "diego@gmail.com",
                 Password = password,
-                BirthDate = DateTime.Now
+                BirthDate = DateTime.Now.AddYears(-18)
             };
 
             var result = await _handler.HandleAsync(createDto);
@@ -227,6 +246,83 @@ namespace RestaurenteUni.Test.UseCases.Account
                 Assert.That(passwordValidation, Is.Not.Null);
                 Assert.That(passwordValidation!.ErrorsMessage, Is.Not.Empty);
             });
+        }
+
+        [TestCaseSource(nameof(ValidBirthDates))]
+        public async Task ShouldNotReturnBirthDateValidation_WhenBirthDateIsValid(DateTime birthDate)
+        {
+            var createDto = new CreateAccountDto()
+            {
+                Email = "diego@gmail.com",
+                Password = "Abc12345",
+                BirthDate = birthDate
+            };
+
+            var result = await _handler.HandleAsync(createDto);
+
+            var birthDateValidation = result.Validations
+                .FirstOrDefault(x => x.Property == nameof(CreateAccountDto.BirthDate));
+
+            Assert.That(birthDateValidation, Is.Null);
+        }
+
+        [Test]
+        public async Task ShouldReturnBirthDateValidation_WhenBirthDateIsEmpty()
+        {
+            var createDto = new CreateAccountDto()
+            {
+                Email = "diego@gmail.com",
+                Password = "Abc12345",
+                BirthDate = default
+            };
+
+            var result = await _handler.HandleAsync(createDto);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.IsSuccess, Is.False);
+
+                var birthDateValidation = result.Validations
+                    .FirstOrDefault(x => x.Property == nameof(CreateAccountDto.BirthDate));
+
+                Assert.That(birthDateValidation, Is.Not.Null);
+                Assert.That(
+                    birthDateValidation!.ErrorsMessage,
+                    Contains.Item("Birth date is required"));
+            });
+        }
+
+        [Test]
+        public async Task ShouldReturnBirthDateValidation_WhenBirthDateIsInTheFuture()
+        {
+            var createDto = new CreateAccountDto()
+            {
+                Email = "diego@gmail.com",
+                Password = "Abc12345",
+                BirthDate = DateTime.Today.AddDays(1)
+            };
+
+            var result = await _handler.HandleAsync(createDto);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.IsSuccess, Is.False);
+
+                var birthDateValidation = result.Validations
+                    .FirstOrDefault(x => x.Property == nameof(CreateAccountDto.BirthDate));
+
+                Assert.That(birthDateValidation, Is.Not.Null);
+                Assert.That(
+                    birthDateValidation!.ErrorsMessage,
+                    Contains.Item("Birth date cannot be in the future"));
+            });
+        }
+
+        private static IEnumerable<DateTime> ValidBirthDates()
+        {
+            yield return DateTime.Today;
+            yield return DateTime.Today.AddYears(-18);
+            yield return DateTime.Today.AddYears(-100);
         }
     }
 }
