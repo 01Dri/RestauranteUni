@@ -2,7 +2,7 @@
 
 namespace RestauranteUni.Application.Utils
 {
-    public class PasswordValidation : AbstractValidator<string>
+    internal sealed class PasswordValidation : AbstractValidator<string>
     {
         public PasswordValidation()
         {

@@ -1,58 +1,97 @@
-﻿namespace RestauranteUni.Domain
+﻿using System.Net;
+
+namespace RestauranteUni.Domain
 {
-    public class Result<T>
-    {
-        public T? Data { get; } 
-        public bool IsSuccess { get; }
-        public List<Validation> Validations { get; } = [];
-
-        public Result(T? data, bool isSuccess)
-        {
-            Data = data;
-            IsSuccess = isSuccess;
-        }
-
-        public Result(List<Validation> validations)
-        {
-            IsSuccess = false;
-            Validations = validations;
-        }
-
-        public static Result<T> Success(T data) => new(data, true);
-        public static Result<T> Failure(List<Validation> validations) => new(validations);
-
-    }
-
     public class Result
     {
+        protected Result(
+            bool isSuccess,
+            IReadOnlyCollection<Validation>? validations = null,
+            HttpStatusCode? statusCode = null)
+        {
+            IsSuccess = isSuccess;
+            Validations = validations ?? [];
+            StatusCode = statusCode;
+        }
+
         public bool IsSuccess { get; }
-        public List<Validation> Validations { get; } = [];
 
-        public Result()
-        {
-            IsSuccess = true;
-        }
+        public IReadOnlyCollection<Validation> Validations { get; }
 
-        public Result(List<Validation> validations)
-        {
-            IsSuccess = false;
-            Validations = validations;
-        }
+        public HttpStatusCode? StatusCode { get; }
 
-        public static Result Success() => new();
-        public static Result Failure(List<Validation> validations) => new(validations);
+        public static Result Success()
+            => new(true);
 
+        public static Result Failure(
+            IEnumerable<Validation> validations,
+            HttpStatusCode statusCode = HttpStatusCode.BadRequest)
+            => new(false, validations.ToList(), statusCode);
+
+        public ErrorResponse ToErrorResponse(string title)
+            => new(
+                title,
+                (int)(StatusCode ?? HttpStatusCode.BadRequest),
+                Validations);
     }
 
-    public class Validation
+    public sealed class Result<T> : Result
     {
-        public Validation(string property, List<string> errorMessage)
+        private Result(
+            T? data,
+            bool isSuccess,
+            IReadOnlyCollection<Validation>? validations = null,
+            HttpStatusCode? statusCode = null)
+            : base(isSuccess, validations, statusCode)
         {
-            Property = property;
-            ErrorsMessage = errorMessage;
+            Data = data;
         }
-        public string Property { get; set; }
-        public List<string> ErrorsMessage { get; set; }
 
+        public T? Data { get; }
+
+        public static Result<T> Success(T data)
+            => new(data, true);
+
+        public static Result<T> Failure(
+            IEnumerable<Validation> validations,
+            HttpStatusCode statusCode = HttpStatusCode.BadRequest)
+            => new(default, false, validations.ToList(), statusCode);
+    }
+
+    public sealed record Validation(
+        string Property,
+        IReadOnlyCollection<string> Errors)
+    {
+        public Validation(string property, string error)
+            : this(property, [error])
+        {
+        }
+
+        public Validation(string error)
+            : this(string.Empty, [error])
+        {
+        }
+    }
+
+    public sealed class ErrorResponse
+    {
+        public ErrorResponse(
+            string title,
+            int status,
+            IEnumerable<Validation> errors)
+        {
+            Title = title;
+            Status = status;
+            Errors = errors.ToList().AsReadOnly();
+            Timestamp = DateTimeOffset.UtcNow;
+        }
+
+        public string Title { get; }
+
+        public int Status { get; }
+
+        public DateTimeOffset Timestamp { get; }
+
+        public IReadOnlyCollection<Validation> Errors { get; }
     }
 }

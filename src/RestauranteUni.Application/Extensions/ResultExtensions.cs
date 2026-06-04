@@ -6,11 +6,11 @@ namespace RestauranteUni.Application.Extensions
     public static class ResultExtensions
     {
 
-        extension(ValidationResult validation)
+        extension(ValidationResult? validation)
         {
             public Result<T> ToResultFailure<T>()
             {
-                return new Result<T>(
+                return Result<T>.Failure(
                     validation.Errors
                         .GroupBy(x => x.PropertyName)
                         .Select(group => new Validation(
@@ -18,6 +18,9 @@ namespace RestauranteUni.Application.Extensions
                             group.Select(x => x.ErrorMessage).ToList()))
                         .ToList());
             }
+
+            public bool ContainsErrors()
+                => validation != null && validation.Errors.Count > 0;
         }
     }
 }

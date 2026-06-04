@@ -138,7 +138,7 @@ namespace RestaurenteUni.Test.UseCases.Account
                     .FirstOrDefault(x => x.Property == "Email");
 
                 Assert.That(emailValidation, Is.Not.Null);
-                Assert.That(emailValidation!.ErrorsMessage.Contains("Invalid e-mail"), Is.True);
+                Assert.That(emailValidation!.Errors.Contains("Invalid e-mail"), Is.True);
             });
         }
 
@@ -163,14 +163,14 @@ namespace RestaurenteUni.Test.UseCases.Account
 
                 Assert.That(emailValidation, Is.Not.Null);
 
-                Assert.That(emailValidation!.ErrorsMessage.Count, Is.EqualTo(2));
+                Assert.That(emailValidation!.Errors.Count, Is.EqualTo(2));
 
                 Assert.That(
-                    emailValidation.ErrorsMessage,
+                    emailValidation.Errors,
                     Contains.Item("E-mail is required"));
 
                 Assert.That(
-                    emailValidation.ErrorsMessage,
+                    emailValidation.Errors,
                     Contains.Item("Invalid e-mail"));
             });
         }
@@ -197,23 +197,23 @@ namespace RestaurenteUni.Test.UseCases.Account
                 Assert.That(passwordValidation, Is.Not.Null);
 
                 Assert.That(
-                    passwordValidation!.ErrorsMessage,
+                    passwordValidation!.Errors,
                     Contains.Item("Password is required"));
 
                 Assert.That(
-                    passwordValidation.ErrorsMessage,
+                    passwordValidation.Errors,
                     Contains.Item("Password must have at least 8 characters"));
 
                 Assert.That(
-                    passwordValidation.ErrorsMessage,
+                    passwordValidation.Errors,
                     Contains.Item("Password must contain at least one uppercase letter"));
 
                 Assert.That(
-                    passwordValidation.ErrorsMessage,
+                    passwordValidation.Errors,
                     Contains.Item("Password must contain at least one lowercase letter"));
 
                 Assert.That(
-                    passwordValidation.ErrorsMessage,
+                    passwordValidation.Errors,
                     Contains.Item("Password must contain at least one number"));
             });
         }
@@ -244,7 +244,7 @@ namespace RestaurenteUni.Test.UseCases.Account
                     .FirstOrDefault(x => x.Property == "Password");
 
                 Assert.That(passwordValidation, Is.Not.Null);
-                Assert.That(passwordValidation!.ErrorsMessage, Is.Not.Empty);
+                Assert.That(passwordValidation!.Errors, Is.Not.Empty);
             });
         }
 
@@ -287,7 +287,7 @@ namespace RestaurenteUni.Test.UseCases.Account
 
                 Assert.That(birthDateValidation, Is.Not.Null);
                 Assert.That(
-                    birthDateValidation!.ErrorsMessage,
+                    birthDateValidation!.Errors,
                     Contains.Item("Birth date is required"));
             });
         }
@@ -313,7 +313,7 @@ namespace RestaurenteUni.Test.UseCases.Account
 
                 Assert.That(birthDateValidation, Is.Not.Null);
                 Assert.That(
-                    birthDateValidation!.ErrorsMessage,
+                    birthDateValidation!.Errors,
                     Contains.Item("Birth date cannot be in the future"));
             });
         }

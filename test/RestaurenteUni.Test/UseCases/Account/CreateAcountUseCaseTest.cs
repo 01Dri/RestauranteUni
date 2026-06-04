@@ -171,8 +171,8 @@ namespace RestaurenteUni.Test.UseCases.Account
                 Assert.That(result.IsSuccess, Is.False);
                 Assert.That(result.Data, Is.Null);
                 Assert.That(result.Validations, Is.Not.Empty);
-                Assert.That(result.Validations[0].Property, Is.EqualTo(nameof(CreateAccountDto.Email)));
-                Assert.That(result.Validations[0].ErrorsMessage, Contains.Item("Invalid e-mail"));
+                Assert.That(result.Validations.First().Property, Is.EqualTo(nameof(CreateAccountDto.Email)));
+                Assert.That(result.Validations.First().Errors, Contains.Item("Invalid e-mail"));
             });
         }
 
