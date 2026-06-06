@@ -1,9 +1,9 @@
 ﻿using FluentValidation.Results;
-using RestauranteUni.Domain;
+using RestauranteUni.Domain.ValuesObjects;
 
 namespace RestauranteUni.Application.Extensions
 {
-    public static class ResultExtensions
+    public static class ValidationResultExtensions
     {
 
         extension(ValidationResult? validation)

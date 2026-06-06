@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using RestauranteUni.Application.Utils;
+using RestauranteUni.Application.Validations;
 using RestauranteUni.Domain.Login;
 
 namespace RestauranteUni.Application.UseCases.Login.Validations
@@ -14,6 +14,10 @@ namespace RestauranteUni.Application.UseCases.Login.Validations
                 .NotEmpty()
                 .NotNull()
                 .WithMessage("Password can't be null or empty");
+
+            RuleFor(x => x.RestaurantId)
+                .NotEmpty()
+                .WithMessage("Restaurant is required");
         }   
     }
 }

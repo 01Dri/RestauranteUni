@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using RestauranteUni.Domain.ValuesObjects;
 
-namespace RestauranteUni.Application.Utils
+namespace RestauranteUni.Application.Validations
 {
     internal sealed class EmailValidation : AbstractValidator<string>
     {

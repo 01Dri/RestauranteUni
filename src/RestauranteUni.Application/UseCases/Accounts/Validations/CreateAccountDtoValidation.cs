@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using RestauranteUni.Application.Utils;
+using RestauranteUni.Application.Validations;
 using RestauranteUni.Domain.Accounts.DTO;
 
 namespace RestauranteUni.Application.UseCases.Accounts.Validations

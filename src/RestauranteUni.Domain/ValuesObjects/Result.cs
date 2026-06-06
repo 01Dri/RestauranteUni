@@ -1,16 +1,24 @@
 ﻿using System.Net;
 
-namespace RestauranteUni.Domain
+namespace RestauranteUni.Domain.ValuesObjects
 {
     public class Result
     {
         protected Result(
             bool isSuccess,
             IReadOnlyCollection<Validation>? validations = null,
-            HttpStatusCode? statusCode = null)
+            HttpStatusCode? statusCode = HttpStatusCode.OK)
         {
             IsSuccess = isSuccess;
             Validations = validations ?? [];
+            StatusCode = statusCode;
+        }
+
+        protected Result(
+            bool isSuccess,
+            HttpStatusCode? statusCode)
+        {
+            IsSuccess = isSuccess;
             StatusCode = statusCode;
         }
 
@@ -22,6 +30,9 @@ namespace RestauranteUni.Domain
 
         public static Result Success()
             => new(true);
+
+        public static Result Success(HttpStatusCode status)
+            => new(true, status);
 
         public static Result Failure(
             IEnumerable<Validation> validations,
@@ -41,16 +52,31 @@ namespace RestauranteUni.Domain
             T? data,
             bool isSuccess,
             IReadOnlyCollection<Validation>? validations = null,
-            HttpStatusCode? statusCode = null)
+            HttpStatusCode? statusCode = HttpStatusCode.OK)
             : base(isSuccess, validations, statusCode)
         {
             Data = data;
         }
 
+        private Result(
+            T? data,
+            bool isSuccess,
+            HttpStatusCode status)
+            : base(isSuccess, status)
+        {
+            Data = data;
+        }
+
+
+
         public T? Data { get; }
 
         public static Result<T> Success(T data)
             => new(data, true);
+
+        public static Result<T> Success(T data, HttpStatusCode status)
+            => new(data, true, status);
+
 
         public static Result<T> Failure(
             IEnumerable<Validation> validations,

@@ -1,12 +1,14 @@
-﻿using System.Net;
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using RestauranteUni.Application.Extensions;
 using RestauranteUni.Data;
-using RestauranteUni.Domain;
+using RestauranteUni.Domain.Accounts;
 using RestauranteUni.Domain.Login;
+using RestauranteUni.Domain.Services;
 using RestauranteUni.Domain.UseCases;
 using RestauranteUni.Domain.ValuesObjects;
+using System.Net;
+using System.Security.Claims;
 
 namespace RestauranteUni.Application.UseCases.Login
 {
@@ -14,10 +16,20 @@ namespace RestauranteUni.Application.UseCases.Login
     {
         private readonly ApplicationDbContext _context;
         private readonly IValidator<LoginDto> _validator;
-        public LoginUseCaseHandler(ApplicationDbContext context, IValidator<LoginDto> validator)
+        private readonly IHasherService _hasherService;
+        private readonly ITokenService _tokenService;
+        public LoginUseCaseHandler
+        (
+            ApplicationDbContext context,   
+            IValidator<LoginDto> validator,
+            IHasherService hasherService,
+            ITokenService tokenService
+        )
         {
             _context = context;
             _validator = validator;
+            _hasherService = hasherService;
+            _tokenService = tokenService;
         }
 
         public async Task<Result<LoginResponseDto>> HandleAsync(LoginDto parameter, CancellationToken cancellation = default)
@@ -28,12 +40,14 @@ namespace RestauranteUni.Application.UseCases.Login
                 var propertyName = validation.Errors.First().PropertyName!;
                 return Result<LoginResponseDto>.Failure
                 (
-          [new Validation($"Invalid {propertyName}")]
+                    [new Validation(propertyName, $"Invalid {propertyName}")]
                 );
             } 
+             
             var email = new Email(parameter.Email);
-            var account = await _context.Accounts.FirstOrDefaultAsync(x => x.Email == email, cancellation);
-            if (account == null)
+            var account = await _context.Accounts.Include(x => x.RoleAccounts)
+                .FirstOrDefaultAsync(x => x.Email == email, cancellation);
+            if (account == null || !_hasherService.VerifyPassword(parameter.Password, account.Password))
             {
                 return Result<LoginResponseDto>.Failure
                 (
@@ -41,9 +55,40 @@ namespace RestauranteUni.Application.UseCases.Login
                     HttpStatusCode.Unauthorized
                 );
             }
+            var restaurant = await _context.Restaurants.Select(x => new 
+                {
+                   x.Id,
+                   x.Name
+                })
+                .FirstOrDefaultAsync(x => x.Id == parameter.RestaurantId, cancellation);
 
 
-            throw new NotImplementedException();
+            if (restaurant == null)
+            {
+                return Result<LoginResponseDto>.Failure
+                (
+                    [new Validation("Restaurant not found")],
+                    HttpStatusCode.NotFound
+                );
+            }
+
+            var rolesClaims = MountRolesClaims(account);
+            var response = new LoginResponseDto(_tokenService.WriteToken(account.Id, account.Email.Value, rolesClaims));
+
+            return Result<LoginResponseDto>.Success(response);
+        }
+
+        private static List<Claim> MountRolesClaims(Account account)
+        {
+            var roles = account.RoleAccounts.Select(x => x.RoleId);
+            var claims = new List<Claim>();
+
+            foreach (var roleType in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, roleType.ToString()!));
+            }
+
+            return claims;
         }
     }
 }

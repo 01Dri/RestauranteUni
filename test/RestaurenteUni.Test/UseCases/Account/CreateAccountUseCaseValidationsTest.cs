@@ -4,11 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using RestauranteUni.Application.UseCases.Accounts;
 using RestauranteUni.Application.UseCases.Accounts.Validations;
-using RestauranteUni.Application.Utils;
 using RestauranteUni.Data;
 using RestauranteUni.Domain.Accounts.DTO;
+using RestauranteUni.Domain.Services;
 using RestauranteUni.Domain.UseCases;
-using RestauranteUni.Domain.Utils;
 
 namespace RestaurenteUni.Test.UseCases.Account
 {
@@ -16,7 +15,7 @@ namespace RestaurenteUni.Test.UseCases.Account
     {
 
         private IUseCaseHandler<CreateAccountDto, CreateAccountUseCaseResponseDto> _handler;
-        private Mock<IHasher> _passwordEncrypter;
+        private Mock<IHasherService> _passwordEncrypter;
         private ApplicationDbContext _context;
 
         [SetUp]
@@ -26,7 +25,7 @@ namespace RestaurenteUni.Test.UseCases.Account
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
 
-            _passwordEncrypter = new Mock<IHasher>();
+            _passwordEncrypter = new Mock<IHasherService>();
             _passwordEncrypter.Setup(x => x.HashPassword(It.IsAny<string>()))
                 .Returns("hash_password");
             _context = new ApplicationDbContext(options);

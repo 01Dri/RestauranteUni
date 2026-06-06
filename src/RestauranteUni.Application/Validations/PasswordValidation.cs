@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace RestauranteUni.Application.Utils
+namespace RestauranteUni.Application.Validations
 {
     internal sealed class PasswordValidation : AbstractValidator<string>
     {

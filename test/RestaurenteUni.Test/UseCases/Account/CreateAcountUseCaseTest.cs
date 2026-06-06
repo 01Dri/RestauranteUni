@@ -6,15 +6,15 @@ using RestauranteUni.Application.UseCases.Accounts;
 using RestauranteUni.Data;
 using RestauranteUni.Domain.Accounts.DTO;
 using RestauranteUni.Domain.Accounts.Roles;
+using RestauranteUni.Domain.Services;
 using RestauranteUni.Domain.UseCases;
-using RestauranteUni.Domain.Utils;
 
 namespace RestaurenteUni.Test.UseCases.Account
 {
     public class CreateAcountUseCaseTest
     {
         private IUseCaseHandler<CreateAccountDto, CreateAccountUseCaseResponseDto> _handler;
-        private Mock<IHasher> _passwordEncrypter;
+        private Mock<IHasherService> _passwordEncrypter;
         private Mock<IValidator<CreateAccountDto>> _validator;
         private ApplicationDbContext _context;
 
@@ -25,7 +25,7 @@ namespace RestaurenteUni.Test.UseCases.Account
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
-            _passwordEncrypter = new Mock<IHasher>();
+            _passwordEncrypter = new Mock<IHasherService>();
             _validator = new Mock<IValidator<CreateAccountDto>>();
             _context = new ApplicationDbContext(options);
             _context.Database.EnsureCreated();

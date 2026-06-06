@@ -1,4 +1,6 @@
-﻿    namespace RestauranteUni.Domain.UseCases;
+﻿using RestauranteUni.Domain.ValuesObjects;
+
+namespace RestauranteUni.Domain.UseCases;
 
     public interface IUseCaseHandler<in TParameter, TResponse>
         where TParameter : IUseCaseRequest

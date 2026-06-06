@@ -1,12 +1,11 @@
 ﻿using FluentValidation;
 using RestauranteUni.Application.Extensions;
 using RestauranteUni.Data;
-using RestauranteUni.Domain;
 using RestauranteUni.Domain.Accounts;
 using RestauranteUni.Domain.Accounts.DTO;
 using RestauranteUni.Domain.Accounts.Roles;
+using RestauranteUni.Domain.Services;
 using RestauranteUni.Domain.UseCases;
-using RestauranteUni.Domain.Utils;
 using RestauranteUni.Domain.ValuesObjects;
 
 namespace RestauranteUni.Application.UseCases.Accounts
@@ -15,13 +14,13 @@ namespace RestauranteUni.Application.UseCases.Accounts
     {
         private readonly ApplicationDbContext _context;
         private readonly IValidator<CreateAccountDto> _validator;
-        private readonly IHasher _hasher;
+        private readonly IHasherService _hasherService;
 
-        public CreateAccountUseCaseHandler(ApplicationDbContext context, IValidator<CreateAccountDto> validator, IHasher hasher)
+        public CreateAccountUseCaseHandler(ApplicationDbContext context, IValidator<CreateAccountDto> validator, IHasherService hasherService)
         {
             _context = context;
             _validator = validator;
-            _hasher = hasher;
+            _hasherService = hasherService;
         }
 
         public async Task<Result<CreateAccountUseCaseResponseDto>> HandleAsync(CreateAccountDto parameter, CancellationToken cancellation = default)
@@ -36,7 +35,7 @@ namespace RestauranteUni.Application.UseCases.Accounts
             var account = new Account()
             {
                 Email = email,
-                Password = _hasher.HashPassword(parameter.Password),
+                Password = _hasherService.HashPassword(parameter.Password),
                 RoleAccounts =
                 [
                     RoleAccount.Create(RoleType.Customer, RoleStatus.Enable)

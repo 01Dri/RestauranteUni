@@ -1,12 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using RestauranteUni.API.Extensions;
 using RestauranteUni.Application;
-using RestauranteUni.Application.Utils;
+using RestauranteUni.Application.Services;
 using RestauranteUni.Data;
-using RestauranteUni.Domain.Utils;
+using RestauranteUni.Domain.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddScoped<IHasher, Hasher>();
+builder.Services.AddScoped<IHasherService, HasherService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+
 builder.Services.AddApplicationServices(typeof(ApplicationAssemblyReference));
 
 

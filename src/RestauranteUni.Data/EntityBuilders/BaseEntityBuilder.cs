@@ -33,5 +33,8 @@ public abstract class BaseEntityBuilder<TId, TEntity> : IEntityTypeConfiguration
             .HasColumnName("active")
             .HasDefaultValue(true)
             .IsRequired();
+
+        builder
+            .HasQueryFilter("OnlyActive", x => x.Active);
     }
 }
