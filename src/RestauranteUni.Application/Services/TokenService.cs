@@ -21,7 +21,7 @@ namespace RestauranteUni.Application.Services
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            claims.Add(new Claim(JwtRegisteredClaimNames.Sub, sub));
+            claims.Add(new Claim(ClaimTypes.Email, sub));
             claims.Add(new Claim(ClaimTypes.NameIdentifier, id.ToString()));
             var token = new JwtSecurityToken
             (

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RestauranteUni.Domain.Restaurants;
+using RestauranteUni.Domain.Restaurants.Menus;
 using RestauranteUni.Domain.ValuesObjects;
 
 namespace RestauranteUni.Data.EntityBuilders
@@ -97,6 +98,8 @@ namespace RestauranteUni.Data.EntityBuilders
             builder.HasIndex(x => x.Cnpj)
                 .HasDatabaseName("ix_restaurants_cnpj")
                 .IsUnique();
+
+            builder.Navigation(x => x.Menu);
 
             SeedRestaurants(builder);
         }

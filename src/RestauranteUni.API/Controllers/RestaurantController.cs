@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RestauranteUni.Data;
 using RestauranteUni.Domain.Users;
 
 namespace RestauranteUni.API.Controllers
@@ -8,19 +9,18 @@ namespace RestauranteUni.API.Controllers
     [ApiController]
     [Route("[controller]")]
     [Authorize]
-    public class TestController : ControllerBase
+    public class RestaurantController : ControllerBase
     {
-        private readonly ICurrentUser _currentUser;
-        public TestController(ICurrentUser currentUser)
+
+        public RestaurantController()
         {
-            _currentUser = currentUser;
         }
 
         [HttpGet]
-        public IActionResult Get()
+        [Route("user/menu")]
+        public async Task<IActionResult> GetUserRestaurantMenu(CancellationToken cancellation)
         {
-
-            return Ok($"Olá {_currentUser.AccountId}");
+            return Ok();
         }
     }
 }

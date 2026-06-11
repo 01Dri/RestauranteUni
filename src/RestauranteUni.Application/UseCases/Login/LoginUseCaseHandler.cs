@@ -72,8 +72,11 @@ namespace RestauranteUni.Application.UseCases.Login
                 );
             }
 
-            var rolesClaims = MountRolesClaims(account);
-            var response = new LoginResponseDto(_tokenService.WriteToken(account.Id, account.Email.Value, rolesClaims));
+            var claims = MountRolesClaims(account);
+            claims.Add(new Claim("restaurant_id", restaurant.Id.ToString()));
+            claims.Add(new Claim("restaurant_name", restaurant.Name));
+
+            var response = new LoginResponseDto(_tokenService.WriteToken(account.Id, account.Email.Value, claims));
 
             return Result<LoginResponseDto>.Success(response);
         }

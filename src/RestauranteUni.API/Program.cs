@@ -1,19 +1,21 @@
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.OpenApi;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi;
+using RestauranteUni.API;
 using RestauranteUni.API.Extensions;
+using RestauranteUni.API.OpenApi;
 using RestauranteUni.Application;
 using RestauranteUni.Application.Services;
 using RestauranteUni.Data;
 using RestauranteUni.Domain.Services;
+using RestauranteUni.Domain.Users;
 using Scalar.AspNetCore;
 using System.Text;
-using RestauranteUni.API.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUser, CurrentUserContext>();
 
 builder.Services.AddScoped<IHasherService, HasherService>();
 builder.Services.AddScoped<ITokenService, TokenService>();

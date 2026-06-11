@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RestauranteUni.Data;
 
@@ -10,9 +11,11 @@ using RestauranteUni.Data;
 namespace RestauranteUni.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260611005522_MenuAndMenuItemv2")]
+    partial class MenuAndMenuItemv2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.8");
@@ -176,7 +179,7 @@ namespace RestauranteUni.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Id = new Guid("2f58e8cb-2936-4a18-b71f-6d8e0f9e91b0"),
                             Active = true,
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Teste",
@@ -265,53 +268,6 @@ namespace RestauranteUni.Data.Migrations
                     b.HasIndex("MenuId", "DisplayOrder");
 
                     b.ToTable("menu_items", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
-                            Active = true,
-                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Hambúrguer artesanal com queijo e salada",
-                            DisplayOrder = 1,
-                            ImageUrl = "/images/xburger.jpg",
-                            IsAvailable = true,
-                            IsFeatured = true,
-                            MenuId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            PreparationTimeInMinutes = 15,
-                            Price = 29.90m,
-                            Title = "X-Burger"
-                        },
-                        new
-                        {
-                            Id = new Guid("33333333-3333-3333-3333-333333333333"),
-                            Active = true,
-                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Pizza tradicional de calabresa",
-                            DisplayOrder = 2,
-                            ImageUrl = "/images/calabresa.jpg",
-                            IsAvailable = true,
-                            IsFeatured = true,
-                            MenuId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            PreparationTimeInMinutes = 25,
-                            Price = 59.90m,
-                            Title = "Pizza Calabresa"
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-4444-4444-4444-444444444444"),
-                            Active = true,
-                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Refrigerante lata",
-                            DisplayOrder = 3,
-                            ImageUrl = "/images/coca350.jpg",
-                            IsAvailable = true,
-                            IsFeatured = false,
-                            MenuId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            PreparationTimeInMinutes = 1,
-                            Price = 6.50m,
-                            Title = "Coca-Cola 350ml"
-                        });
                 });
 
             modelBuilder.Entity("RestauranteUni.Domain.Restaurants.Restaurant", b =>
