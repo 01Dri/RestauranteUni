@@ -1,7 +1,9 @@
-﻿namespace RestauranteUni.Domain.Restaurants.Menus.DTO
+﻿namespace RestauranteUni.Domain.Menus
 {
-    public sealed class MenuItemResponseDto
+    public class MenuItem : BaseDomain<long>
     {
+
+        public Guid PublicId { get; set; } = Guid.NewGuid();
         public required string Title { get; set; }
 
         public string? Description { get; set; }
@@ -18,5 +20,9 @@
 
         public bool IsFeatured { get; set; }
 
+        public long? MenuId { get; set; }
+        public virtual Menu? Menu { get; set; }
+
+        public virtual ICollection<MenuItemIngredient> Ingredients { get; set; } = [];
     }
 }

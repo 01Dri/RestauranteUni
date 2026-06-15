@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RestauranteUni.Domain.Restaurants;
-using RestauranteUni.Domain.Restaurants.Menus;
 using RestauranteUni.Domain.ValuesObjects;
 
 namespace RestauranteUni.Data.EntityBuilders
@@ -100,6 +99,8 @@ namespace RestauranteUni.Data.EntityBuilders
                 .IsUnique();
 
             builder.Navigation(x => x.Menu);
+            builder.Navigation(x => x.Stock);
+
 
             SeedRestaurants(builder);
         }

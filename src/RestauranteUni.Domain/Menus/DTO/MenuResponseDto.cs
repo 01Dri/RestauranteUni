@@ -1,6 +1,6 @@
 ﻿using RestauranteUni.Domain.UseCases;
 
-namespace RestauranteUni.Domain.Restaurants.Menus.DTO
+namespace RestauranteUni.Domain.Menus.DTO
 {
     public sealed class MenuResponseDto : IUseCaseResponse
     {

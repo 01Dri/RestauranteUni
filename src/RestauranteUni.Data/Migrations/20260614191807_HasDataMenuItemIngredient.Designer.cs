@@ -11,8 +11,8 @@ using RestauranteUni.Data;
 namespace RestauranteUni.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260610234423_MenuAndMenuItem")]
-    partial class MenuAndMenuItem
+    [Migration("20260614191807_HasDataMenuItemIngredient")]
+    partial class HasDataMenuItemIngredient
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -138,11 +138,54 @@ namespace RestauranteUni.Data.Migrations
                     b.ToTable("role_accounts", (string)null);
                 });
 
-            modelBuilder.Entity("RestauranteUni.Domain.Restaurants.Menus.Menu", b =>
+            modelBuilder.Entity("RestauranteUni.Domain.Ingredients.Ingredient", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("Active")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(true)
+                        .HasColumnName("active");
+
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("name");
+
+                    b.Property<Guid>("PublicId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("public_id");
+
+                    b.Property<int>("Unit")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("unit");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PublicId")
+                        .IsUnique();
+
+                    b.ToTable("Ingredient");
+                });
+
+            modelBuilder.Entity("RestauranteUni.Domain.Menus.Menu", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
                         .HasColumnName("id");
 
                     b.Property<bool>("Active")
@@ -161,6 +204,10 @@ namespace RestauranteUni.Data.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("name");
 
+                    b.Property<Guid>("PublicId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("public_id");
+
                     b.Property<Guid>("RestaurantId")
                         .HasColumnType("TEXT")
                         .HasColumnName("restaurant_id");
@@ -171,17 +218,31 @@ namespace RestauranteUni.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PublicId")
+                        .IsUnique();
+
                     b.HasIndex("RestaurantId")
                         .IsUnique();
 
                     b.ToTable("menus", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            Active = true,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Teste",
+                            PublicId = new Guid("9a88024d-2618-4e25-87f5-35217f7a7c8b"),
+                            RestaurantId = new Guid("9a88024d-2618-4e25-87f5-35217f7a7c8a")
+                        });
                 });
 
-            modelBuilder.Entity("RestauranteUni.Domain.Restaurants.Menus.MenuItem", b =>
+            modelBuilder.Entity("RestauranteUni.Domain.Menus.MenuItem", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("id");
 
                     b.Property<bool>("Active")
@@ -222,8 +283,8 @@ namespace RestauranteUni.Data.Migrations
                         .HasDefaultValue(false)
                         .HasColumnName("is_featured");
 
-                    b.Property<Guid>("MenuId")
-                        .HasColumnType("TEXT")
+                    b.Property<long>("MenuId")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("menu_id");
 
                     b.Property<int>("PreparationTimeInMinutes")
@@ -236,6 +297,10 @@ namespace RestauranteUni.Data.Migrations
                         .HasPrecision(10, 2)
                         .HasColumnType("TEXT")
                         .HasColumnName("price");
+
+                    b.Property<Guid>("PublicId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("public_id");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -255,9 +320,111 @@ namespace RestauranteUni.Data.Migrations
 
                     b.HasIndex("MenuId");
 
+                    b.HasIndex("PublicId")
+                        .IsUnique();
+
                     b.HasIndex("MenuId", "DisplayOrder");
 
-                    b.ToTable("menu_items", (string)null);
+                    b.ToTable("menu_item", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            Active = true,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Hambúrguer artesanal com queijo e salada",
+                            DisplayOrder = 1,
+                            ImageUrl = "/images/xburger.jpg",
+                            IsAvailable = true,
+                            IsFeatured = true,
+                            MenuId = 1L,
+                            PreparationTimeInMinutes = 15,
+                            Price = 29.90m,
+                            PublicId = new Guid("9a88024d-2618-4e25-87f5-35217f7a7c9b"),
+                            Title = "X-Burger"
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            Active = true,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Pizza tradicional de calabresa",
+                            DisplayOrder = 2,
+                            ImageUrl = "/images/calabresa.jpg",
+                            IsAvailable = true,
+                            IsFeatured = true,
+                            MenuId = 1L,
+                            PreparationTimeInMinutes = 25,
+                            Price = 59.90m,
+                            PublicId = new Guid("2a88024d-2618-4e25-87f5-35217f7a7c9b"),
+                            Title = "Pizza Calabresa"
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            Active = true,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Refrigerante lata",
+                            DisplayOrder = 3,
+                            ImageUrl = "/images/coca350.jpg",
+                            IsAvailable = true,
+                            IsFeatured = false,
+                            MenuId = 1L,
+                            PreparationTimeInMinutes = 1,
+                            Price = 6.50m,
+                            PublicId = new Guid("7a88024d-2618-4e25-87f5-35217f7a7c9b"),
+                            Title = "Coca-Cola 350ml"
+                        });
+                });
+
+            modelBuilder.Entity("RestauranteUni.Domain.Menus.MenuItemIngredient", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("id");
+
+                    b.Property<long?>("MenuItemId")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("menu_item_id");
+
+                    b.Property<long?>("MenuItemId1")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("quantity");
+
+                    b.Property<long?>("StockIngredientId")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("stock_ingredient_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MenuItemId");
+
+                    b.HasIndex("MenuItemId1");
+
+                    b.HasIndex("StockIngredientId");
+
+                    b.ToTable("menu_item_ingredient", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            MenuItemId = 1L,
+                            Quantity = 0.5m,
+                            StockIngredientId = 1L
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            MenuItemId = 1L,
+                            Quantity = 0.2m,
+                            StockIngredientId = 2L
+                        });
                 });
 
             modelBuilder.Entity("RestauranteUni.Domain.Restaurants.Restaurant", b =>
@@ -359,6 +526,137 @@ namespace RestauranteUni.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("RestauranteUni.Domain.Stocks.Stock", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("Active")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(true)
+                        .HasColumnName("active");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("PublicId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("public_id");
+
+                    b.Property<Guid?>("RestaurantId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("restaurant_id");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PublicId")
+                        .IsUnique();
+
+                    b.HasIndex("RestaurantId")
+                        .IsUnique();
+
+                    b.ToTable("stock", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            Active = true,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PublicId = new Guid("00000000-0000-0000-0000-000000000001"),
+                            RestaurantId = new Guid("9a88024d-2618-4e25-87f5-35217f7a7c8a")
+                        });
+                });
+
+            modelBuilder.Entity("RestauranteUni.Domain.Stocks.StockIngredient", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("Active")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(true)
+                        .HasColumnName("active");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("name");
+
+                    b.Property<Guid>("PublicId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("public_id");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("quantity");
+
+                    b.Property<long?>("StockId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("StockId1")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Unit")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("unit");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PublicId")
+                        .IsUnique();
+
+                    b.HasIndex("StockId");
+
+                    b.HasIndex("StockId1");
+
+                    b.ToTable("stock_ingredient", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            Active = true,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Tomate",
+                            PublicId = new Guid("00000000-0000-0000-0000-000000000002"),
+                            Quantity = 100m,
+                            StockId = 1L,
+                            Unit = 3
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            Active = true,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Alface",
+                            PublicId = new Guid("00000000-0000-0000-0000-000000000003"),
+                            Quantity = 50m,
+                            StockId = 1L,
+                            Unit = 3
+                        });
+                });
+
             modelBuilder.Entity("RestauranteUni.Domain.Accounts.Roles.RoleAccount", b =>
                 {
                     b.HasOne("RestauranteUni.Domain.Accounts.Account", "Account")
@@ -378,26 +676,45 @@ namespace RestauranteUni.Data.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("RestauranteUni.Domain.Restaurants.Menus.Menu", b =>
+            modelBuilder.Entity("RestauranteUni.Domain.Menus.Menu", b =>
                 {
                     b.HasOne("RestauranteUni.Domain.Restaurants.Restaurant", "Restaurant")
                         .WithOne("Menu")
-                        .HasForeignKey("RestauranteUni.Domain.Restaurants.Menus.Menu", "RestaurantId")
+                        .HasForeignKey("RestauranteUni.Domain.Menus.Menu", "RestaurantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Restaurant");
                 });
 
-            modelBuilder.Entity("RestauranteUni.Domain.Restaurants.Menus.MenuItem", b =>
+            modelBuilder.Entity("RestauranteUni.Domain.Menus.MenuItem", b =>
                 {
-                    b.HasOne("RestauranteUni.Domain.Restaurants.Menus.Menu", "Menu")
+                    b.HasOne("RestauranteUni.Domain.Menus.Menu", "Menu")
                         .WithMany("Items")
                         .HasForeignKey("MenuId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Menu");
+                });
+
+            modelBuilder.Entity("RestauranteUni.Domain.Menus.MenuItemIngredient", b =>
+                {
+                    b.HasOne("RestauranteUni.Domain.Menus.MenuItem", "MenuItem")
+                        .WithMany()
+                        .HasForeignKey("MenuItemId");
+
+                    b.HasOne("RestauranteUni.Domain.Menus.MenuItem", null)
+                        .WithMany("Ingredients")
+                        .HasForeignKey("MenuItemId1");
+
+                    b.HasOne("RestauranteUni.Domain.Stocks.StockIngredient", "StockIngredient")
+                        .WithMany()
+                        .HasForeignKey("StockIngredientId");
+
+                    b.Navigation("MenuItem");
+
+                    b.Navigation("StockIngredient");
                 });
 
             modelBuilder.Entity("RestauranteUni.Domain.Restaurants.Restaurant", b =>
@@ -495,19 +812,54 @@ namespace RestauranteUni.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("RestauranteUni.Domain.Stocks.Stock", b =>
+                {
+                    b.HasOne("RestauranteUni.Domain.Restaurants.Restaurant", "Restaurant")
+                        .WithOne("Stock")
+                        .HasForeignKey("RestauranteUni.Domain.Stocks.Stock", "RestaurantId");
+
+                    b.Navigation("Restaurant");
+                });
+
+            modelBuilder.Entity("RestauranteUni.Domain.Stocks.StockIngredient", b =>
+                {
+                    b.HasOne("RestauranteUni.Domain.Stocks.Stock", "Stock")
+                        .WithMany()
+                        .HasForeignKey("StockId");
+
+                    b.HasOne("RestauranteUni.Domain.Stocks.Stock", null)
+                        .WithMany("Items")
+                        .HasForeignKey("StockId1");
+
+                    b.Navigation("Stock");
+                });
+
             modelBuilder.Entity("RestauranteUni.Domain.Accounts.Account", b =>
                 {
                     b.Navigation("RoleAccounts");
                 });
 
-            modelBuilder.Entity("RestauranteUni.Domain.Restaurants.Menus.Menu", b =>
+            modelBuilder.Entity("RestauranteUni.Domain.Menus.Menu", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("RestauranteUni.Domain.Menus.MenuItem", b =>
+                {
+                    b.Navigation("Ingredients");
                 });
 
             modelBuilder.Entity("RestauranteUni.Domain.Restaurants.Restaurant", b =>
                 {
                     b.Navigation("Menu");
+
+                    b.Navigation("Stock")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("RestauranteUni.Domain.Stocks.Stock", b =>
+                {
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

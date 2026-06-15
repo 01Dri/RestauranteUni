@@ -1,7 +1,10 @@
-﻿namespace RestauranteUni.Domain.Restaurants.Menus
+﻿using RestauranteUni.Domain.Restaurants;
+
+namespace RestauranteUni.Domain.Menus
 {
-    public class Menu : BaseDomain<Guid>
+    public class Menu : BaseDomain<long>
     {
+        public Guid PublicId { get; set; } = Guid.NewGuid();
         public required string Name { get; set; }
         public virtual List<MenuItem> Items { get; set; } = [];
 

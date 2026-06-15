@@ -1,4 +1,5 @@
-using RestauranteUni.Domain.Restaurants.Menus;
+using RestauranteUni.Domain.Menus;
+using RestauranteUni.Domain.Stocks;
 using RestauranteUni.Domain.ValuesObjects;
 
 namespace RestauranteUni.Domain.Restaurants
@@ -12,6 +13,6 @@ namespace RestauranteUni.Domain.Restaurants
         public Email Email { get; set; } = null!;
         public Cnpj Cnpj { get; set; } = null!;
         public virtual Menu? Menu { get; set; }
-
+        public virtual Stock Stock { get; set; } = null!;
     }
 }

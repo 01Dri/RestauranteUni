@@ -1,6 +1,6 @@
-﻿namespace RestauranteUni.Domain.Restaurants.Menus
+﻿namespace RestauranteUni.Domain.Menus.DTO
 {
-    public class MenuItem : BaseDomain<Guid>
+    public sealed class MenuItemResponseDto
     {
         public required string Title { get; set; }
 
@@ -17,9 +17,6 @@
         public int PreparationTimeInMinutes { get; set; }
 
         public bool IsFeatured { get; set; }
-
-        public Guid? MenuId { get; set; }
-        public virtual Menu? Menu { get; set; }
 
     }
 }

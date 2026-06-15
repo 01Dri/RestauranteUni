@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RestauranteUni.Data;
 
@@ -10,9 +11,11 @@ using RestauranteUni.Data;
 namespace RestauranteUni.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260614185729_PublicIds")]
+    partial class PublicIds
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.8");
@@ -175,7 +178,7 @@ namespace RestauranteUni.Data.Migrations
                     b.HasIndex("PublicId")
                         .IsUnique();
 
-                    b.ToTable("Ingredients");
+                    b.ToTable("Ingredient");
                 });
 
             modelBuilder.Entity("RestauranteUni.Domain.Menus.Menu", b =>
@@ -322,7 +325,7 @@ namespace RestauranteUni.Data.Migrations
 
                     b.HasIndex("MenuId", "DisplayOrder");
 
-                    b.ToTable("menu_item", (string)null);
+                    b.ToTable("menu_items", (string)null);
 
                     b.HasData(
                         new
@@ -386,6 +389,9 @@ namespace RestauranteUni.Data.Migrations
                         .HasColumnType("INTEGER")
                         .HasColumnName("menu_item_id");
 
+                    b.Property<long?>("MenuItemId1")
+                        .HasColumnType("INTEGER");
+
                     b.Property<decimal>("Quantity")
                         .HasColumnType("TEXT")
                         .HasColumnName("quantity");
@@ -398,25 +404,11 @@ namespace RestauranteUni.Data.Migrations
 
                     b.HasIndex("MenuItemId");
 
+                    b.HasIndex("MenuItemId1");
+
                     b.HasIndex("StockIngredientId");
 
                     b.ToTable("menu_item_ingredient", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            MenuItemId = 1L,
-                            Quantity = 0.5m,
-                            StockIngredientId = 1L
-                        },
-                        new
-                        {
-                            Id = 2L,
-                            MenuItemId = 1L,
-                            Quantity = 0.2m,
-                            StockIngredientId = 2L
-                        });
                 });
 
             modelBuilder.Entity("RestauranteUni.Domain.Restaurants.Restaurant", b =>
@@ -556,16 +548,6 @@ namespace RestauranteUni.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("stock", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            Active = true,
-                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            PublicId = new Guid("00000000-0000-0000-0000-000000000001"),
-                            RestaurantId = new Guid("9a88024d-2618-4e25-87f5-35217f7a7c8a")
-                        });
                 });
 
             modelBuilder.Entity("RestauranteUni.Domain.Stocks.StockIngredient", b =>
@@ -599,9 +581,11 @@ namespace RestauranteUni.Data.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("quantity");
 
-                    b.Property<long>("StockId")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("stock_id");
+                    b.Property<long?>("StockId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("StockId1")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Unit")
                         .HasColumnType("INTEGER")
@@ -618,31 +602,9 @@ namespace RestauranteUni.Data.Migrations
 
                     b.HasIndex("StockId");
 
-                    b.ToTable("stock_ingredient", (string)null);
+                    b.HasIndex("StockId1");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            Active = true,
-                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Tomate",
-                            PublicId = new Guid("00000000-0000-0000-0000-000000000002"),
-                            Quantity = 100m,
-                            StockId = 1L,
-                            Unit = 3
-                        },
-                        new
-                        {
-                            Id = 2L,
-                            Active = true,
-                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Alface",
-                            PublicId = new Guid("00000000-0000-0000-0000-000000000003"),
-                            Quantity = 50m,
-                            StockId = 1L,
-                            Unit = 3
-                        });
+                    b.ToTable("stock_ingredient", (string)null);
                 });
 
             modelBuilder.Entity("RestauranteUni.Domain.Accounts.Roles.RoleAccount", b =>
@@ -689,11 +651,15 @@ namespace RestauranteUni.Data.Migrations
             modelBuilder.Entity("RestauranteUni.Domain.Menus.MenuItemIngredient", b =>
                 {
                     b.HasOne("RestauranteUni.Domain.Menus.MenuItem", "MenuItem")
-                        .WithMany("Ingredients")
+                        .WithMany()
                         .HasForeignKey("MenuItemId");
 
+                    b.HasOne("RestauranteUni.Domain.Menus.MenuItem", null)
+                        .WithMany("Ingredients")
+                        .HasForeignKey("MenuItemId1");
+
                     b.HasOne("RestauranteUni.Domain.Stocks.StockIngredient", "StockIngredient")
-                        .WithMany("MenuItemIngredients")
+                        .WithMany()
                         .HasForeignKey("StockIngredientId");
 
                     b.Navigation("MenuItem");
@@ -808,10 +774,12 @@ namespace RestauranteUni.Data.Migrations
             modelBuilder.Entity("RestauranteUni.Domain.Stocks.StockIngredient", b =>
                 {
                     b.HasOne("RestauranteUni.Domain.Stocks.Stock", "Stock")
+                        .WithMany()
+                        .HasForeignKey("StockId");
+
+                    b.HasOne("RestauranteUni.Domain.Stocks.Stock", null)
                         .WithMany("Items")
-                        .HasForeignKey("StockId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("StockId1");
 
                     b.Navigation("Stock");
                 });
@@ -842,11 +810,6 @@ namespace RestauranteUni.Data.Migrations
             modelBuilder.Entity("RestauranteUni.Domain.Stocks.Stock", b =>
                 {
                     b.Navigation("Items");
-                });
-
-            modelBuilder.Entity("RestauranteUni.Domain.Stocks.StockIngredient", b =>
-                {
-                    b.Navigation("MenuItemIngredients");
                 });
 #pragma warning restore 612, 618
         }

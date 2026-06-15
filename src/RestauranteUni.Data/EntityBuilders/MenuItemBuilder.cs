@@ -1,14 +1,23 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using RestauranteUni.Domain.Restaurants.Menus;
+using RestauranteUni.Domain.Menus;
+using System.Security.Cryptography;
 
 namespace RestauranteUni.Data.EntityBuilders
 {
-    internal sealed class MenuItemBuilder : BaseEntityBuilder<Guid, MenuItem>
+    internal sealed class MenuItemBuilder : BaseEntityBuilder<long, MenuItem>
     {
         protected override void ConfigureEntity(EntityTypeBuilder<MenuItem> builder)
         {
-            builder.ToTable("menu_items");
+            builder.ToTable("menu_item");
+
+            builder.HasIndex(x => x.PublicId)
+                .IsUnique();
+
+            builder.Property(x => x.PublicId)
+                .HasColumnName("public_id")
+                .IsRequired();
+
 
             builder.Property(x => x.Title)
                 .HasColumnName("title")
@@ -57,7 +66,11 @@ namespace RestauranteUni.Data.EntityBuilders
                 .HasForeignKey(x => x.MenuId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+
+
+            
             builder.Navigation(x => x.Menu).AutoInclude();
+            builder.Navigation(x => x.Ingredients);
 
             // Índices para melhorar performance
             builder.HasIndex(x => x.MenuId);
@@ -68,7 +81,8 @@ namespace RestauranteUni.Data.EntityBuilders
             builder.HasData(
                 new MenuItem
                 {
-                    Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                    Id = 1,
+                    PublicId = Guid.Parse("9a88024d-2618-4e25-87f5-35217f7a7c9b"),
                     Title = "X-Burger",
                     Description = "Hambúrguer artesanal com queijo e salada",
                     Price = 29.90m,
@@ -77,13 +91,14 @@ namespace RestauranteUni.Data.EntityBuilders
                     DisplayOrder = 1,
                     PreparationTimeInMinutes = 15,
                     IsFeatured = true,
-                    MenuId = MenuBuilder.MenuId,
+                    MenuId = 1,
                     CreatedAt = new DateTime(2026, 1, 1),
                     Active = true
                 },
                 new MenuItem
                 {
-                    Id = Guid.Parse("33333333-3333-3333-3333-333333333333"),
+                    Id = 2,
+                    PublicId = Guid.Parse("2a88024d-2618-4e25-87f5-35217f7a7c9b"),
                     Title = "Pizza Calabresa",
                     Description = "Pizza tradicional de calabresa",
                     Price = 59.90m,
@@ -92,13 +107,14 @@ namespace RestauranteUni.Data.EntityBuilders
                     DisplayOrder = 2,
                     PreparationTimeInMinutes = 25,
                     IsFeatured = true,
-                    MenuId = MenuBuilder.MenuId,
+                    MenuId = 1,
                     CreatedAt = new DateTime(2026, 1, 1),
                     Active = true
                 },
                 new MenuItem
                 {
-                    Id = Guid.Parse("44444444-4444-4444-4444-444444444444"),
+                    Id = 3,
+                    PublicId = Guid.Parse("7a88024d-2618-4e25-87f5-35217f7a7c9b"),
                     Title = "Coca-Cola 350ml",
                     Description = "Refrigerante lata",
                     Price = 6.50m,
@@ -107,7 +123,7 @@ namespace RestauranteUni.Data.EntityBuilders
                     DisplayOrder = 3,
                     PreparationTimeInMinutes = 1,
                     IsFeatured = false,
-                    MenuId = MenuBuilder.MenuId,
+                    MenuId = 1,
                     CreatedAt = new DateTime(2026, 1, 1),
                     Active = true
                 }
