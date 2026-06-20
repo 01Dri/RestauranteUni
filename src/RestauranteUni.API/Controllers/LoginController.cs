@@ -10,10 +10,12 @@ namespace RestauranteUni.API.Controllers
     public class LoginController : ControllerBase
     {
         private readonly IUseCaseHandler<LoginDto, LoginResponseDto> _handler;
+        public readonly IConfiguration _configuration;
 
-        public LoginController(IUseCaseHandler<LoginDto, LoginResponseDto> handler)
+        public LoginController(IUseCaseHandler<LoginDto, LoginResponseDto> handler, IConfiguration configuration)
         {
             _handler = handler;
+            _configuration = configuration;
         }
 
         [HttpPost]
@@ -30,5 +32,29 @@ namespace RestauranteUni.API.Controllers
 
         }
 
+
+        [HttpPost]
+        [Route("Developer")]
+        public async Task<IActionResult> LoginDeveloperAsync(CancellationToken cancellation)
+        {
+            var developerCredentials = _configuration
+                .GetSection("DeveloperCredentials");
+
+            var email = developerCredentials["Email"];
+            var password = developerCredentials["Password"];
+            
+            
+            var result = await _handler.HandleAsync(
+                new LoginDto(email, password, Guid.Parse("9a88024d-2618-4e25-87f5-35217f7a7c8a")), cancellation);
+            
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+
+            var errorResponse = result.ToErrorResponse("Login Error");
+            return StatusCode(errorResponse.Status, errorResponse);
+
+        }
     }
 }

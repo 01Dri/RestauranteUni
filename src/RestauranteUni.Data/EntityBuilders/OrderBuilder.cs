@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using RestauranteUni.Domain.Core.Ingredients.Enums;
 using RestauranteUni.Domain.Core.Orders;
 
 namespace RestauranteUni.Data.EntityBuilders;
@@ -13,8 +14,16 @@ public class OrderBuilder : BaseEntityBuilder<long, Order>
         builder.Property(x => x.PublicId)
             .HasColumnName("public_id").IsRequired();
 
+        builder.Property(x => x.Status)
+            .HasColumnName("status").IsRequired();
+        
+        builder.Property(x => x.Channel)
+            .HasColumnName("channel").IsRequired();
+        
         builder.Property(x => x.AccountId)
             .HasColumnName("account_id").IsRequired();
+        
+        
         
         builder.HasOne(x => x.Account)
             .WithMany(a => a.Orders)
@@ -42,6 +51,8 @@ public class OrderBuilder : BaseEntityBuilder<long, Order>
             RestaurantId = Guid.Parse("9a88024d-2618-4e25-87f5-35217f7a7c8a"),
             CreatedAt = new DateTime(2026, 1, 1),
             Active = true,
+            Status = OrderStatus.Chicken,
+            Channel = OrderChannel.Totem
         });
     }
 }

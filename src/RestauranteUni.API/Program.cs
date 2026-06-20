@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -7,10 +8,9 @@ using RestauranteUni.API.OpenApi;
 using RestauranteUni.Application;
 using RestauranteUni.Application.Services;
 using RestauranteUni.Data;
+using RestauranteUni.Domain.Core.Users;
 using RestauranteUni.Domain.Services;
 using Scalar.AspNetCore;
-using System.Text;
-using RestauranteUni.Domain.Core.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -2,6 +2,7 @@
 
 public sealed class MenuItemResponseDto
 {
+    public Guid PublicId { get; set; }
     public required string Title { get; set; }
 
     public string? Description { get; set; }

@@ -27,4 +27,5 @@ public class MenuItem : BaseDomain<long>
     public virtual ICollection<MenuItemIngredient> Ingredients { get; set; } = [];
     
     public virtual ICollection<OrderItem> OrderItems { get; set; }
+    
 }

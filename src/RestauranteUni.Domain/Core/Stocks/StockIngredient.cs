@@ -14,6 +14,6 @@ public class StockIngredient : BaseDomain<long>
 
     public long? StockId { get; set; }
     public Stock Stock { get; set; } = null!;
-
     public virtual ICollection<MenuItemIngredient> MenuItemIngredients { get; set; } = [];
+    public virtual ICollection<StockIngredientMovement> StockMovements { get; set; } = [];
 }

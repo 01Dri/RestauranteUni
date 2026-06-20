@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RestauranteUni.Data;
 
@@ -10,9 +11,11 @@ using RestauranteUni.Data;
 namespace RestauranteUni.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260620191643_SomeUpdates")]
+    partial class SomeUpdates
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.8");
@@ -763,8 +766,10 @@ namespace RestauranteUni.Data.Migrations
                         .HasColumnName("description");
 
                     b.Property<long?>("OrderId")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("order_id");
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid?>("OrderPublicId")
+                        .HasColumnType("TEXT");
 
                     b.Property<decimal>("Quantity")
                         .HasColumnType("TEXT")
@@ -999,7 +1004,7 @@ namespace RestauranteUni.Data.Migrations
             modelBuilder.Entity("RestauranteUni.Domain.Core.Stocks.StockIngredientMovement", b =>
                 {
                     b.HasOne("RestauranteUni.Domain.Core.Orders.Order", "Order")
-                        .WithMany("StockIngredientMovements")
+                        .WithMany()
                         .HasForeignKey("OrderId");
 
                     b.HasOne("RestauranteUni.Domain.Core.Stocks.StockIngredient", "StockIngredient")
@@ -1035,8 +1040,6 @@ namespace RestauranteUni.Data.Migrations
             modelBuilder.Entity("RestauranteUni.Domain.Core.Orders.Order", b =>
                 {
                     b.Navigation("Items");
-
-                    b.Navigation("StockIngredientMovements");
                 });
 
             modelBuilder.Entity("RestauranteUni.Domain.Core.Restaurants.Restaurant", b =>

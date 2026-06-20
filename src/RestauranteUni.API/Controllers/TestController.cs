@@ -38,49 +38,12 @@ namespace RestauranteUni.API.Controllers
             var items = menu.Items
                 .SelectMany(x => x.Ingredients).Select(x => new
                 {
-                    Quantity = x.Quantity,
+                    Quantity = x.QuantityUseToOrder,
                     Name = x.StockIngredient.Name
                 })
                 .ToList();
             return Ok(items);
         }
-        
-        [HttpGet]
-        [Route("orders")]
-        public IActionResult Orders()
-        {
-            var orders = _context.Orders
-                .Include(x => x.Items)
-                .ThenInclude(x
-                    => x.MenuItem)
-                .Select(x => new OrderResponseDto
-                {
-                    Id = x.PublicId,
-                    AccountId = x.AccountId,
-                    RestaurantId = x.RestaurantId,
-                    Items = x.Items.Select(i => new OrderItemResponseDto
-                    {
-                        MenuItemName = i.MenuItem.Title,
-                        Quantity = i.Quantity
-                    }).ToList()
-                })
-                .FirstOrDefault(x => x.AccountId == _currentUser.AccountId && x.RestaurantId == _currentUser.RestaurantId);
-            
-            return Ok(orders);
-        }
     }
 
-    class OrderResponseDto
-    {
-        public Guid Id { get; set; }
-        public long? AccountId { get; set; }
-        public Guid? RestaurantId { get; set; }
-        public List<OrderItemResponseDto> Items { get; set; } = [];
-    }
-    
-    class OrderItemResponseDto
-    {
-        public string MenuItemName { get; set; } = null!;
-        public decimal Quantity { get; set; }
-    }
 }

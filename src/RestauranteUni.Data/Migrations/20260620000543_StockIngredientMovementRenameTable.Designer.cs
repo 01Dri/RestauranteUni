@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RestauranteUni.Data;
 
@@ -10,9 +11,11 @@ using RestauranteUni.Data;
 namespace RestauranteUni.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260620000543_StockIngredientMovementRenameTable")]
+    partial class StockIngredientMovementRenameTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.8");
@@ -386,9 +389,9 @@ namespace RestauranteUni.Data.Migrations
                         .HasColumnType("INTEGER")
                         .HasColumnName("menu_item_id");
 
-                    b.Property<decimal>("QuantityUseToOrder")
+                    b.Property<decimal>("Quantity")
                         .HasColumnType("TEXT")
-                        .HasColumnName("quantity_use_to_order");
+                        .HasColumnName("quantity");
 
                     b.Property<long?>("StockIngredientId")
                         .HasColumnType("INTEGER")
@@ -407,14 +410,14 @@ namespace RestauranteUni.Data.Migrations
                         {
                             Id = 1L,
                             MenuItemId = 1L,
-                            QuantityUseToOrder = 0.5m,
+                            Quantity = 0.5m,
                             StockIngredientId = 1L
                         },
                         new
                         {
                             Id = 2L,
                             MenuItemId = 1L,
-                            QuantityUseToOrder = 0.2m,
+                            Quantity = 0.2m,
                             StockIngredientId = 2L
                         });
                 });
@@ -497,6 +500,10 @@ namespace RestauranteUni.Data.Migrations
                         .HasColumnType("INTEGER")
                         .HasColumnName("order_id");
 
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("quantity");
+
                     b.HasKey("Id");
 
                     b.HasIndex("MenuItemId");
@@ -510,13 +517,15 @@ namespace RestauranteUni.Data.Migrations
                         {
                             Id = 1L,
                             MenuItemId = 1L,
-                            OrderId = 1L
+                            OrderId = 1L,
+                            Quantity = 2m
                         },
                         new
                         {
                             Id = 2L,
                             MenuItemId = 2L,
-                            OrderId = 1L
+                            OrderId = 1L,
+                            Quantity = 1m
                         });
                 });
 
@@ -762,10 +771,6 @@ namespace RestauranteUni.Data.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("description");
 
-                    b.Property<long?>("OrderId")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("order_id");
-
                     b.Property<decimal>("Quantity")
                         .HasColumnType("TEXT")
                         .HasColumnName("quantity");
@@ -779,8 +784,6 @@ namespace RestauranteUni.Data.Migrations
                         .HasColumnName("type");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
 
                     b.HasIndex("StockIngredientId");
 
@@ -998,17 +1001,11 @@ namespace RestauranteUni.Data.Migrations
 
             modelBuilder.Entity("RestauranteUni.Domain.Core.Stocks.StockIngredientMovement", b =>
                 {
-                    b.HasOne("RestauranteUni.Domain.Core.Orders.Order", "Order")
-                        .WithMany("StockIngredientMovements")
-                        .HasForeignKey("OrderId");
-
                     b.HasOne("RestauranteUni.Domain.Core.Stocks.StockIngredient", "StockIngredient")
                         .WithMany("StockMovements")
                         .HasForeignKey("StockIngredientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Order");
 
                     b.Navigation("StockIngredient");
                 });
@@ -1035,8 +1032,6 @@ namespace RestauranteUni.Data.Migrations
             modelBuilder.Entity("RestauranteUni.Domain.Core.Orders.Order", b =>
                 {
                     b.Navigation("Items");
-
-                    b.Navigation("StockIngredientMovements");
                 });
 
             modelBuilder.Entity("RestauranteUni.Domain.Core.Restaurants.Restaurant", b =>

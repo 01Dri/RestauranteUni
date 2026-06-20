@@ -1,6 +1,7 @@
 ﻿using RestauranteUni.Domain.Core.Accounts;
 using RestauranteUni.Domain.Core.Ingredients.Enums;
 using RestauranteUni.Domain.Core.Restaurants;
+using RestauranteUni.Domain.Core.Stocks;
 
 namespace RestauranteUni.Domain.Core.Orders;
 
@@ -11,8 +12,10 @@ public class Order : BaseDomain<long>
     public required OrderChannel Channel { get; set; }
     public long? AccountId { get; set; }
     public Account Account { get; set; } = null!;
-    public Guid? RestaurantId { get; set; }
+    public required Guid RestaurantId { get; set; }
     public virtual Restaurant Restaurant { get; set; } = null!;
     public virtual ICollection<OrderItem> Items { get; set; } = [];
-    
+
+    public virtual ICollection<StockIngredientMovement> StockIngredientMovements { get; set; } = [];
+
 }

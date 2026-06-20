@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RestauranteUni.Data;
 using RestauranteUni.Domain.Core.Menus.DTO;
 using RestauranteUni.Domain.UseCases;
 
@@ -17,20 +16,6 @@ namespace RestauranteUni.API.Controllers
         public RestaurantController(IUseCaseHandler<MenuResponseDto> handler)
         {
             _handler = handler;
-        }
-
-        [HttpGet]
-        [Route("user/menu")]
-        public async Task<IActionResult> GetUserRestaurantMenu(CancellationToken cancellation)
-        {
-            var result = await _handler.HandleAsync(cancellation);
-            if (result.IsSuccess)
-            {
-                return Ok(result);
-            }
-
-            var errorResponse = result.ToErrorResponse("Test");
-            return StatusCode(errorResponse.Status, errorResponse);
         }
     }
 }

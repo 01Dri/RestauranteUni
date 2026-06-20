@@ -11,5 +11,5 @@ public class MenuItemIngredient
     public long? StockIngredientId { get; set; }
     public StockIngredient StockIngredient { get; set; } = null!;
 
-    public decimal Quantity { get; set; }
+    public decimal QuantityUseToOrder { get; set; } // Quantidade do ingrediente necessário para o item
 }

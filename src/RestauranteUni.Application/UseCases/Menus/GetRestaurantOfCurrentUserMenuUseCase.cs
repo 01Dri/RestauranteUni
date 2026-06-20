@@ -7,11 +7,11 @@ using RestauranteUni.Domain.ValuesObjects;
 
 namespace RestauranteUni.Application.UseCases.Restaurants.Menus
 {
-     public sealed class GetRestaurantMenuUseCase  : IUseCaseHandler<MenuResponseDto>
+     public sealed class GetRestaurantOfCurrentUserMenuUseCase  : IUseCaseHandler<MenuResponseDto>
      {
          private readonly ICurrentUser _currentUser;
          private readonly ApplicationDbContext _context;
-         public GetRestaurantMenuUseCase(ICurrentUser currentUser, ApplicationDbContext context)
+         public GetRestaurantOfCurrentUserMenuUseCase(ICurrentUser currentUser, ApplicationDbContext context)
          {
              _currentUser = currentUser;
              _context = context;
@@ -21,16 +21,19 @@ namespace RestauranteUni.Application.UseCases.Restaurants.Menus
          {
              var menu = await _context.Menus
                  .Include(x => x.Restaurant)
-                 .Include(x => x.Items)
+                 .Include(x => x.Items
+                     .Where(i => i.IsAvailable))
                  .FirstOrDefaultAsync(x => x.RestaurantId == _currentUser.RestaurantId, cancellation);
              if (menu == null)
              {
                  return Result<MenuResponseDto>.FailureNotFound("Menu not found.");
              }
 
-             var items = menu.Items.OrderBy(x => x.DisplayOrder)
+             var items = menu
+                 .Items.OrderBy(x => x.DisplayOrder)
                  .Select(x => new MenuItemResponseDto()
              {
+                 PublicId = x.PublicId,
                  Title = x.Title,
                  Description = x.Description,
                  Price = x.Price,

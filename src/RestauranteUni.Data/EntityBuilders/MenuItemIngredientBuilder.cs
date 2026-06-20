@@ -15,8 +15,8 @@ namespace RestauranteUni.Data.EntityBuilders
             builder.Property(x => x.Id)
                 .HasColumnName("id");
 
-            builder.Property(x => x.Quantity)
-                .HasColumnName("quantity").IsRequired();
+            builder.Property(x => x.QuantityUseToOrder)
+                .HasColumnName("quantity_use_to_order").IsRequired();
 
             builder.Property(x => x.MenuItemId)
                 .HasColumnName("menu_item_id");
@@ -42,7 +42,7 @@ namespace RestauranteUni.Data.EntityBuilders
                 Id = 1,
                 MenuItemId = 1,
                 StockIngredientId = 1,
-                Quantity = 0.5m,
+                QuantityUseToOrder = 0.5m,
             });
             
              builder.HasData(new MenuItemIngredient()
@@ -50,7 +50,7 @@ namespace RestauranteUni.Data.EntityBuilders
                  Id = 2,
                  MenuItemId = 1,
                  StockIngredientId = 2,
-                 Quantity = 0.2m,
+                 QuantityUseToOrder = 0.2m,
              });
         }
     }

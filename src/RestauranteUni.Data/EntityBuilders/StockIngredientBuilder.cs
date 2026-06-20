@@ -40,6 +40,7 @@ namespace RestauranteUni.Data.EntityBuilders
             
             
             builder.Navigation(x => x.Stock);
+            builder.Navigation(x => x.StockMovements);
             
             builder.HasData(new StockIngredient()
             {

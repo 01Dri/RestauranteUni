@@ -13,10 +13,6 @@ public class OrderItemBuilder : IEntityTypeConfiguration<OrderItem>
         builder.Property(x => x.Id)
             .HasColumnName("id");
 
-        builder.Property(x => x.Quantity)
-            .HasColumnName("quantity")
-            .IsRequired();
-        
         builder.Property(x => x.MenuItemId)
             .HasColumnName("menu_item_id")
             .IsRequired();
@@ -37,14 +33,12 @@ public class OrderItemBuilder : IEntityTypeConfiguration<OrderItem>
             Id = 1,
             MenuItemId = 1,
             OrderId = 1,
-            Quantity = 2,
         });
         builder.HasData(new OrderItem()
         {
             Id = 2,
             MenuItemId = 2,
             OrderId = 1,
-            Quantity = 1,
         });
         
     }

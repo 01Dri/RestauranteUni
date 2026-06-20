@@ -23,6 +23,8 @@ namespace RestauranteUni.Data
         public virtual DbSet<StockIngredient> StockIngredients { get; set; }
         public virtual DbSet<Order> Orders { get; set; }
         public virtual DbSet<OrderItem> OrderItems { get; set; }
+        public virtual DbSet<StockIngredientMovement> StockIngredientMovements { get; set; }
+        
 
         public ApplicationDbContext(
             DbContextOptions<ApplicationDbContext> options)
