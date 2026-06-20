@@ -21,6 +21,8 @@ public class OrderResponseDto : IUseCaseResponse
     public OrderStatus Status { get; set; }
 
     public IImmutableList<OrderItemResponseDto> Items { get; set; } = [];
+    
+    public Error? ErrorResponse { get; set; }
 }
 
 public class OrderItemResponseDto

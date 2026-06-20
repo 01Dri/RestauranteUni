@@ -10,4 +10,5 @@ public class CreateAccountUseCaseResponseDto
     public Email Email { get; set; } = null!;
     public List<RoleType> Roles { get; set; } = [];
     public long Id { get; set; }
+    public Error? ErrorResponse { get; set; }
 }

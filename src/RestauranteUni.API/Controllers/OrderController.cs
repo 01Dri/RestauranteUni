@@ -8,7 +8,7 @@ namespace RestauranteUni.API.Controllers;
 [ApiController]
 [Route("[controller]")]
 [Authorize]
-public class OrderController : ControllerBase
+public class OrderController : BaseController
 {
     private readonly IUseCaseHandler<CreateOrderDto, OrderResponseDto> _handler;
 
@@ -25,8 +25,6 @@ public class OrderController : ControllerBase
         {
             return Created("", result.Data);
         }
-
-        var error = result.ToErrorResponse("Failed to create an order");
-        return StatusCode(error.Status, error);
+        return Error("Failed to create an order", result);
     }
 }

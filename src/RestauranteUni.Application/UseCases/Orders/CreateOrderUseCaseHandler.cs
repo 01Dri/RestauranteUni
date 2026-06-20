@@ -54,9 +54,31 @@ public sealed class CreateOrderUseCaseHandler : IUseCaseHandler<CreateOrderDto, 
 
         if (menuItemsNotAvailable.Count > 0)
         {
-            return ToResponse("Some  menu items is not available.");
+            return Result<OrderResponseDto>.Failure(new Error()
+            {
+                    Message = "Some menu items is not available.",
+                    Details = menuItemsNotAvailable.Select(x => new
+                    {
+                        Item = x,
+                    })
+            });
         }
         
+        var menuItemsConsumption = BuildOrderStockConsumption(menuItems, parameter);
+        var menuItemsWithoutIngredientStock = menuItemsConsumption.Where(x => !x.HaveIngredientStock).ToList();
+        if (menuItemsWithoutIngredientStock.Count > 0)
+        {
+            return Result<OrderResponseDto>.Failure(new Error()
+            {
+                Message = "Some menu items not have ingredients on stock",
+                Details = menuItemsWithoutIngredientStock.Select(x => new
+                {
+                    Item = x.Item.Title,
+                    Ingredients = string.Join(", ", x.IngredientsWithoutStock)
+                })
+            });
+        }
+
         var order = new Order()
         {
             Status = OrderStatus.Process,
@@ -68,12 +90,6 @@ public sealed class CreateOrderUseCaseHandler : IUseCaseHandler<CreateOrderDto, 
         await _dbContext.AddAsync(order, cancellation);
         await _dbContext.SaveChangesAsync(cancellation);
         
-        var menuItemsConsumption = BuildOrderStockConsumption(menuItems, parameter);
-        if (menuItemsConsumption == null)
-        {
-            return ToResponse("Some  menu items is not available.");
-        }
-
         await HandleMenuItemsAsync(menuItemsConsumption, order);
         await _dbContext.SaveChangesAsync(cancellation);
 
@@ -134,7 +150,7 @@ public sealed class CreateOrderUseCaseHandler : IUseCaseHandler<CreateOrderDto, 
                 return null;
             }
 
-            var ingredientConsumption = new MenuItemOrderConsumption()
+            var menuItemConsumption = new MenuItemOrderConsumption()
             {
                 ItemId = menuItem.Id,
                 Item = menuItem,
@@ -154,12 +170,14 @@ public sealed class CreateOrderUseCaseHandler : IUseCaseHandler<CreateOrderDto, 
 
                 if (quantityToConsume > currentStock)
                 {
-                    return null;
+
+                    menuItemConsumption.HaveIngredientStock = false;
+                    menuItemConsumption.IngredientsWithoutStock.Add(ingredient.StockIngredient.Name);
                 }
 
                 availableStock[stockIngredient.Id] -= quantityToConsume;
 
-                ingredientConsumption.IngredientConsumptions.Add(
+                menuItemConsumption.IngredientConsumptions.Add(
                     new IngredientOrderConsumption()
                     {
                         Ingredient = ingredient,
@@ -167,7 +185,7 @@ public sealed class CreateOrderUseCaseHandler : IUseCaseHandler<CreateOrderDto, 
                     });
             }
 
-            result.Add(ingredientConsumption);
+            result.Add(menuItemConsumption);
         }
 
         return result;
@@ -239,7 +257,8 @@ class MenuItemOrderConsumption
     public List<IngredientOrderConsumption> IngredientConsumptions { get; set; } = [];
     public decimal TotalPrice { get; set; }
     public decimal TotalQuantity { get; set; }
-    
+    public bool HaveIngredientStock { get; set; } = true;
+    public List<string> IngredientsWithoutStock { get; set; } = [];
 }
 
 

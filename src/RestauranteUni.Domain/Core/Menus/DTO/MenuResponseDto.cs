@@ -8,4 +8,5 @@ public sealed class MenuResponseDto : IUseCaseResponse
     public string RestaurantName { get; set; }
 
     public IReadOnlyCollection<MenuItemResponseDto> Items { get; set; } = [];
+    public Error? ErrorResponse { get; set; }
 }

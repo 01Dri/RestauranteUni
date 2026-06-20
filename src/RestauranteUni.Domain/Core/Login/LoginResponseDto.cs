@@ -10,4 +10,5 @@ public record LoginResponseDto : IUseCaseResponse
     }
 
     public string Token { get; set; }
+    public Error? ErrorResponse { get; set; }
 }

@@ -17,6 +17,12 @@ namespace RestauranteUni.Domain.UseCases;
     }
 
 public interface IUseCaseRequest;
-public interface IUseCaseResponse;
+
+public interface IUseCaseResponse
+{
+    Error? ErrorResponse { get; set; }
+}
+
+
 
 
