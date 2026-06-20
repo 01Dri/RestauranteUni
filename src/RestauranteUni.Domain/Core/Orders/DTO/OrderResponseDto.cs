@@ -1,4 +1,5 @@
-﻿using RestauranteUni.Domain.Core.Ingredients.Enums;
+﻿using System.Collections.Immutable;
+using RestauranteUni.Domain.Core.Ingredients.Enums;
 using RestauranteUni.Domain.UseCases;
 
 namespace RestauranteUni.Domain.Core.Orders.DTO;
@@ -19,7 +20,7 @@ public class OrderResponseDto : IUseCaseResponse
 
     public OrderStatus Status { get; set; }
 
-    public List<OrderItemResponseDto> Items { get; set; } = [];
+    public IImmutableList<OrderItemResponseDto> Items { get; set; } = [];
 }
 
 public class OrderItemResponseDto
@@ -34,5 +35,5 @@ public class OrderItemResponseDto
 
     public decimal Quantity { get; set; }
 
-    public decimal Price { get; set; }
+    public decimal UnitPrice { get; set; }
 }

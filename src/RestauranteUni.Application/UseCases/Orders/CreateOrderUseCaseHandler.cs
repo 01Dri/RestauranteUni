@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Collections.Immutable;
+using Microsoft.EntityFrameworkCore;
 using RestauranteUni.Data;
 using RestauranteUni.Domain.Core.Ingredients.Enums;
 using RestauranteUni.Domain.Core.Menus;
@@ -76,8 +77,27 @@ public sealed class CreateOrderUseCaseHandler : IUseCaseHandler<CreateOrderDto, 
         await HandleMenuItemsAsync(menuItemsConsumption, order);
         await _dbContext.SaveChangesAsync(cancellation);
 
-        return Result<OrderResponseDto>.Success(new OrderResponseDto());
+        return Result<OrderResponseDto>.Success(new OrderResponseDto()
+        {
+            Id = order.PublicId,
+            CreatedAt = order.CreatedAt,
+            UpdatedAt = order.UpdatedAt,
+            AccountId = _currentUser.AccountId,
+            AccountEmail = _currentUser.Email,
+            Status = order.Status,
+            TotalPrice = menuItemsConsumption.Sum(x => x.TotalPrice),
+            Items = order.Items.Select(x => new OrderItemResponseDto()
+            {
+                Id = x.Id.GetValueOrDefault(),
+                MenuId = x.MenuItem.Menu.PublicId,
+                MenuItemId = x.MenuItem.PublicId,
+                MenuItemName = x.MenuItem.Title,
+                UnitPrice = x.MenuItem.Price,
+                Quantity = menuItemsConsumption.FirstOrDefault(m => m.ItemId == x.MenuItemId)!.TotalQuantity,
+            }).ToImmutableList()
+        });
     }
+
 
     private List<CreateOrderItemDto> BuildParameterItems(CreateOrderDto parameter)
     {
@@ -116,7 +136,10 @@ public sealed class CreateOrderUseCaseHandler : IUseCaseHandler<CreateOrderDto, 
 
             var ingredientConsumption = new MenuItemOrderConsumption()
             {
-                Item = menuItem
+                ItemId = menuItem.Id,
+                Item = menuItem,
+                TotalPrice = menuItem.Price * orderItem.Quantity,
+                TotalQuantity = orderItem.Quantity
             };
 
             foreach (var ingredient in menuItem.Ingredients)
@@ -140,7 +163,7 @@ public sealed class CreateOrderUseCaseHandler : IUseCaseHandler<CreateOrderDto, 
                     new IngredientOrderConsumption()
                     {
                         Ingredient = ingredient,
-                        QuantityToUseInOrder = quantityToConsume
+                        QuantityToUseInOrder = quantityToConsume,
                     });
             }
 
@@ -180,13 +203,12 @@ public sealed class CreateOrderUseCaseHandler : IUseCaseHandler<CreateOrderDto, 
                 menuItem.Item.Ingredients.All(x =>
                     x.StockIngredient.Quantity >= x.QuantityUseToOrder);
 
-            _dbContext.MenuItems.Update(menuItem.Item);
             order.Items.Add(new OrderItem()
             {
                 MenuItem = menuItem.Item,
             });
 
-            _dbContext.Orders.Update(order);
+            order.Status = OrderStatus.Chicken;
         }
         
     }
@@ -212,8 +234,12 @@ public sealed class CreateOrderUseCaseHandler : IUseCaseHandler<CreateOrderDto, 
 
 class MenuItemOrderConsumption
 {
+    public long ItemId { get; set; }
     public MenuItem Item { get; set; }
     public List<IngredientOrderConsumption> IngredientConsumptions { get; set; } = [];
+    public decimal TotalPrice { get; set; }
+    public decimal TotalQuantity { get; set; }
+    
 }
 
 
