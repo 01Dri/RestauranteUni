@@ -1,5 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using RestauranteUni.Domain;
 using RestauranteUni.Domain.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -10,7 +11,7 @@ namespace RestauranteUni.Application.Services
     public sealed class TokenService : ITokenService
     {
         private readonly IConfiguration _config;
-        private readonly DateTime _defaultExpirationTime = DateTime.Now.AddMinutes(30);
+        private readonly DateTime _defaultExpirationTime = Calendar.Now.AddMinutes(30);
         public TokenService(IConfiguration config)
         {
             _config = config;

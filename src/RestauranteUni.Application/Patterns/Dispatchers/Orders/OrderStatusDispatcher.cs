@@ -25,7 +25,7 @@ public sealed class OrderStatusDispatcher : IDispatcher<OrderStatus, Order>
     {
         if (_handlers.TryGetValue(parameter1, out var handler))
         {
-            return handler.Handle(parameter2, _currentUser);
+            return handler.Handle(parameter2, _currentUser, _applicationDbContext);
         }
 
         return Result.Failure(new Error()

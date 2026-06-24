@@ -1,3 +1,4 @@
+using RestauranteUni.Data;
 using RestauranteUni.Domain.Core.Accounts.Roles;
 using RestauranteUni.Domain.Core.Ingredients.Enums;
 using RestauranteUni.Domain.Core.Orders;
@@ -7,11 +8,11 @@ using RestauranteUni.Domain.ValuesObjects;
 
 namespace RestauranteUni.Application.Patterns.Dispatchers.Orders.Handlers;
 
-public sealed class OrderStatusOrderStatusReadyHandler : IOrderStatusHandler
+public sealed class OrderStatusReadyHandler : IOrderStatusHandler
 {
 
     public OrderStatus Status { get; set; } = OrderStatus.Ready;
-    public  Result Handle(Order order, ICurrentUser user)
+    public  Result Handle(Order order, ICurrentUser user, ApplicationDbContext context)
     {
         try
         {

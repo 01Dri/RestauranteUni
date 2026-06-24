@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -6,6 +6,7 @@ using RestauranteUni.Application.UseCases.Accounts;
 using RestauranteUni.Data;
 using RestauranteUni.Domain.Core.Accounts.DTO;
 using RestauranteUni.Domain.Core.Accounts.Roles;
+using RestauranteUni.Domain;
 using RestauranteUni.Domain.Services;
 using RestauranteUni.Domain.UseCases;
 
@@ -231,7 +232,7 @@ namespace RestaurenteUni.Test.UseCases.Account
             {
                 Email = "diego@gmail.com",
                 Password = "MinhaSenha123",
-                BirthDate = DateTime.Now.AddYears(-18)
+                BirthDate = Calendar.Now.AddYears(-18)
             };
         }
 

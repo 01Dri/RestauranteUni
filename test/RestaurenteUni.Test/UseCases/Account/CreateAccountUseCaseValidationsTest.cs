@@ -6,6 +6,7 @@ using RestauranteUni.Application.UseCases.Accounts;
 using RestauranteUni.Application.UseCases.Accounts.Validations;
 using RestauranteUni.Data;
 using RestauranteUni.Domain.Core.Accounts.DTO;
+using RestauranteUni.Domain;
 using RestauranteUni.Domain.Services;
 using RestauranteUni.Domain.UseCases;
 
@@ -53,7 +54,7 @@ namespace RestaurenteUni.Test.UseCases.Account
             {
                 Email = email,
                 Password = password,
-                BirthDate = DateTime.Now.AddYears(-18)
+                BirthDate = Calendar.Now.AddYears(-18)
             };
 
             var result = await _handler.HandleAsync(createDto);
@@ -76,7 +77,7 @@ namespace RestaurenteUni.Test.UseCases.Account
             {
                 Email = email,
                 Password = "Abc12345",
-                BirthDate = DateTime.Now.AddYears(-18)
+                BirthDate = Calendar.Now.AddYears(-18)
             };
 
             var result = await _handler.HandleAsync(createDto);
@@ -99,7 +100,7 @@ namespace RestaurenteUni.Test.UseCases.Account
             {
                 Email = "diego@gmail.com",
                 Password = password,
-                BirthDate = DateTime.Now.AddYears(-18)
+                BirthDate = Calendar.Now.AddYears(-18)
             };
 
             var result = await _handler.HandleAsync(createDto);
@@ -123,7 +124,7 @@ namespace RestaurenteUni.Test.UseCases.Account
             {
                 Email = email,
                 Password = "123456",
-                BirthDate = DateTime.Now.AddYears(-18)
+                BirthDate = Calendar.Now.AddYears(-18)
             };
 
             var result = await _handler.HandleAsync(createDto);
@@ -148,7 +149,7 @@ namespace RestaurenteUni.Test.UseCases.Account
             {
                 Email = "",
                 Password = "123456",
-                BirthDate = DateTime.Now.AddYears(-18)
+                BirthDate = Calendar.Now.AddYears(-18)
             };
 
             var result = await _handler.HandleAsync(createDto);
@@ -181,7 +182,7 @@ namespace RestaurenteUni.Test.UseCases.Account
             {
                 Email = "diego@gmail.com",
                 Password = "",
-                BirthDate = DateTime.Now.AddYears(-18)
+                BirthDate = Calendar.Now.AddYears(-18)
             };
 
             var result = await _handler.HandleAsync(createDto);
@@ -230,7 +231,7 @@ namespace RestaurenteUni.Test.UseCases.Account
             {
                 Email = "diego@gmail.com",
                 Password = password,
-                BirthDate = DateTime.Now.AddYears(-18)
+                BirthDate = Calendar.Now.AddYears(-18)
             };
 
             var result = await _handler.HandleAsync(createDto);

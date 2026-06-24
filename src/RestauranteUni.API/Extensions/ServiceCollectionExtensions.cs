@@ -36,23 +36,12 @@ namespace RestauranteUni.API.Extensions
 
             private void AddDispatchers()
             {
-                
-                /**
-                 * Preciso pegar a instancia do dispatcher
-                 * Depois os handlers, adicionar na instancia do dispatcher.
-                 *
-                 * Os handlers precisam estar no container, e o dispatcher também
-                 */
-    
-                service.AddScoped<IOrderStatusHandler, OrderStatusOrderStatusReadyHandler>();
+                service.AddScoped<IOrderStatusHandler, OrderStatusReadyHandler>();
                 service.AddScoped<IDispatcher<OrderStatus, Order>, OrderStatusDispatcher>(s =>
                 {
+                    var handlers = GetOrderStatusHandlers();
                     var currentUser = s.GetRequiredService<ICurrentUser>();
                     var applicationDbContext = s.GetRequiredService<ApplicationDbContext>();
-                    var handlers = new List<IOrderStatusHandler>()
-                    {
-                        new OrderStatusOrderStatusReadyHandler()
-                    };
                     return new OrderStatusDispatcher(handlers, currentUser, applicationDbContext);
                 });
                 
@@ -75,6 +64,22 @@ namespace RestauranteUni.API.Extensions
                 {
                     service.AddScoped(implementation.Service, implementation.Implementation);
                 }    
+            }
+
+            private static List<IOrderStatusHandler> GetOrderStatusHandlers()
+            {
+                var assembly = typeof(IOrderStatusHandler).Assembly;
+                var implementations = assembly
+                    .GetTypes()
+                    .Where(t =>
+                        t.IsClass &&
+                        !t.IsAbstract &&
+                        typeof(IOrderStatusHandler).IsAssignableFrom(t))
+                    .ToList();
+
+               return implementations
+                    .Select(type => (IOrderStatusHandler)Activator.CreateInstance(type)!)
+                    .ToList();
             }
         }
     }

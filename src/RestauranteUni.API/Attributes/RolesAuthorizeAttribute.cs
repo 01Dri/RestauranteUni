@@ -12,7 +12,7 @@ public class RolesAuthorizeAttribute : TypeFilterAttribute
         : base(typeof(RolesAuthorizeFilter))
     {
         Arguments = [roles];
-    }
+    } 
 }
 
 public class RolesAuthorizeFilter : IAuthorizationFilter
