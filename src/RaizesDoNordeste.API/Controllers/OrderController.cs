@@ -1,0 +1,52 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using RaizesDoNordeste.Domain.Core.Orders.DTO;
+using RaizesDoNordeste.Domain.UseCases;
+
+namespace RaizesDoNordeste.API.Controllers;
+
+[ApiController]
+[Route("pedido")]
+[Authorize]
+public class OrderController : BaseController   
+{
+    private readonly IUseCaseHandler<CreateOrderDto, OrderResponseDto> _createOrderHandler;
+    private readonly IUseCaseHandler<ChangeOrderStatusDto, OrderStatusChangeResponseDto> _changeStatusHandler;
+
+    public OrderController
+    (
+        IUseCaseHandler<CreateOrderDto, OrderResponseDto> createOrderHandler,
+        IUseCaseHandler<ChangeOrderStatusDto, OrderStatusChangeResponseDto> changeStatusHandler
+    )
+    {
+        _createOrderHandler = createOrderHandler;
+        _changeStatusHandler = changeStatusHandler;
+    }
+
+    
+    // COLOCAR UMA LOGICA PARA QUANDO O CLIENTE JA ESTIVER COM UM PEDIDO EM ABERTO, ADICIONAR OS ITEMS NESSE PEDIDO
+    [HttpPost]
+    public async Task<IActionResult> Create(CreateOrderDto dto, CancellationToken cancellationToken)
+    {
+        var result = await _createOrderHandler.HandleAsync(dto, cancellationToken);
+        if (result.IsSuccess)
+        {
+            return Created("", result.Data);
+        }
+        return Error("Falha ao criar o pedido", result);
+    }
+    
+    
+    [HttpPut]
+    [Route("status")]
+    [Authorize]
+    public async Task<IActionResult> ChangeStatus(ChangeOrderStatusDto dto, CancellationToken cancellationToken)
+    {
+        var result = await _changeStatusHandler.HandleAsync(dto, cancellationToken);
+        if (result.IsSuccess)
+        {
+            return Created("", result.Data);
+        }
+        return Error("Falha ao alterar o status do pedido", result);
+    }
+}
